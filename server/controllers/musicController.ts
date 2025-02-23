@@ -4,11 +4,7 @@ import {
   getCategories,
   getSongsByFilters,
 } from '@server/services/musicService';
-
-const handleError = (res: Response, error: any, message: string) => {
-  console.error(error);
-  return res.status(500).json({ message, error });
-};
+import { SongFilters } from '@server/models/Song';
 
 export const likeSong = (req: Request, res: Response) => {
   const userId = res.locals.user.id;
@@ -18,44 +14,38 @@ export const likeSong = (req: Request, res: Response) => {
     return res.status(400).json({ message: 'ID pesme je obavezan' });
   }
 
-  try {
-    const result = likeSongService(userId, songId);
+  const result = likeSongService(userId, songId);
 
-    if (result.error) {
-      const statusCode = result.status ?? 500;
-      return res.status(statusCode).json({ message: result.message });
-    }
-
-    return res.status(200).json({ message: 'Pesma je uspešno lajkovana' });
-  } catch (error) {
-    return handleError(res, error, 'Greška na serveru');
+  if (result.error) {
+    return res.status(result.status!).json({ message: result.message });
   }
+
+  return res.status(200).json({ message: 'Pesma je uspešno lajkovana' });
 };
 
 export const fetchCategories = (req: Request, res: Response) => {
-  try {
-    res.status(200).json(getCategories());
-  } catch (error) {
-    return handleError(res, error, 'Greška pri preuzimanju kategorija');
+  const result = getCategories();
+
+  if (result.error) {
+    return res.status(result.status!).json({ message: result.message });
   }
+
+  return res.status(200).json(result.data);
 };
 
 export const getFilteredSongs = (req: Request, res: Response) => {
-  try {
-    const { kategorija_id, redosled } = req.query;
+  const filters: SongFilters = {
+    kategorija_id: req.query.kategorija_id 
+      ? parseInt(req.query.kategorija_id as string)
+      : undefined,
+    redosled: req.query.redosled === 'lajkovi' ? 'lajkovi' : undefined,
+  };
 
-    const filters: {
-      kategorija_id?: number;
-      redosled?: 'lajkovi';
-    } = {
-      kategorija_id: kategorija_id
-        ? parseInt(kategorija_id as string)
-        : undefined,
-      redosled: redosled === 'lajkovi' ? 'lajkovi' : undefined,
-    };
+  const result = getSongsByFilters(filters);
 
-    res.json(getSongsByFilters(filters));
-  } catch (error) {
-    return handleError(res, error, 'Greška na serveru pri preuzimanju pesama');
+  if (result.error) {
+    return res.status(result.status!).json({ message: result.message });
   }
+
+  return res.json(result.data);
 };

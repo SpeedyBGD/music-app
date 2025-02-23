@@ -31,7 +31,8 @@ const migrations = [
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     email TEXT NOT NULL UNIQUE,
     lozinka TEXT NOT NULL,
-    jwt_token TEXT
+    jwt_token TEXT,
+    token_blacklisted_at TEXT
   );
   `,
   `

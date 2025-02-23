@@ -1,23 +1,34 @@
 import db from '@server/utils/db';
+import Song, {
+  SongFilters,
+  Category,
+  SongWithLikes,
+} from '@server/models/Song';
 
-const handleDbError = (error: any) => {
-  console.error(error);
-  return {
-    error: true,
-    status: 500,
-    message: 'Greška u bazi podataka',
-  };
-};
+interface ServiceResponse<T> {
+  error?: boolean;
+  data?: T;
+  status?: number;
+  message?: string;
+}
 
-export const likeSongService = (userId: number, songId: number) => {
+export const likeSongService = (
+  userId: number,
+  songId: number
+): ServiceResponse<void> => {
   try {
-    const song = db.prepare('SELECT * FROM pesme WHERE id = ?').get(songId);
+    const song = db.prepare('SELECT * FROM pesme WHERE id = ?').get(songId) as
+      | Song
+      | undefined;
+
     if (!song) {
       return { error: true, status: 404, message: 'Pesma nije pronađena' };
     }
 
     const existingLike = db
-      .prepare('SELECT * FROM lajkovanje WHERE korisnik_id = ? AND pesma_id = ?')
+      .prepare(
+        'SELECT * FROM lajkovanje WHERE korisnik_id = ? AND pesma_id = ?'
+      )
       .get(userId, songId);
 
     if (existingLike) {
@@ -28,29 +39,30 @@ export const likeSongService = (userId: number, songId: number) => {
       };
     }
 
-    db.prepare('INSERT INTO lajkovanje (korisnik_id, pesma_id) VALUES (?, ?)')
-      .run(userId, songId);
+    db.prepare(
+      'INSERT INTO lajkovanje (korisnik_id, pesma_id) VALUES (?, ?)'
+    ).run(userId, songId);
 
     return { error: false };
   } catch (error) {
-    console.error(userId, songId, error);
-    return handleDbError(error);
+    return { error: true, status: 500, message: 'Greška u bazi podataka' };
   }
 };
 
-export const getCategories = () => {
+export const getCategories = (): ServiceResponse<Category[]> => {
   try {
-    const stmt = db.prepare('SELECT id, naziv FROM kategorije');
-    return stmt.all();
+    const categories = db
+      .prepare('SELECT id, naziv FROM kategorije')
+      .all() as Category[];
+    return { data: categories };
   } catch (error) {
-    return handleDbError(error);
+    return { error: true, status: 500, message: 'Greška u bazi podataka' };
   }
 };
 
-export const getSongsByFilters = (filters: {
-  kategorija_id?: number;
-  redosled?: 'lajkovi';
-}) => {
+export const getSongsByFilters = (
+  filters: SongFilters
+): ServiceResponse<SongWithLikes[]> => {
   try {
     let query = `
       SELECT pesme.*, 
@@ -76,9 +88,9 @@ export const getSongsByFilters = (filters: {
       query += ' ORDER BY broj_lajkova DESC';
     }
 
-    const stmt = db.prepare(query);
-    return stmt.all(...params);
+    const songs = db.prepare(query).all(...params) as SongWithLikes[];
+    return { data: songs };
   } catch (error) {
-    return handleDbError(error);
+    return { error: true, status: 500, message: 'Greška u bazi podataka' };
   }
 };
