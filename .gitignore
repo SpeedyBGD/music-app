@@ -40,7 +40,7 @@ jest.setup.js
 *.css
 *.css.map
 
-database.db
+baza.db
 
 docker/
 Makefile

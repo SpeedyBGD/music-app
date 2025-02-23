@@ -25,8 +25,8 @@ const migrations = [
     naziv TEXT NOT NULL,
     umetnik TEXT NOT NULL,
     video_url TEXT NOT NULL,
-    category_id INTEGER,
-    FOREIGN KEY (category_id) REFERENCES kategorije(id) ON DELETE SET NULL
+    kategorija_id INTEGER,
+    FOREIGN KEY (kategorija_id) REFERENCES kategorije(id) ON DELETE SET NULL
   );
   `,
   `
@@ -53,10 +53,18 @@ const migrations = [
     ('Hip-hop');
   `,
   `
-  INSERT INTO pesme (naziv, umetnik, video_url, category_id) VALUES
+  INSERT INTO pesme (naziv, umetnik, video_url, kategorija_id) VALUES
     ('Pesma 1', 'Izvođač 1', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 1),
     ('Pesma 2', 'Izvođač 2', 'https://www.youtube.com/watch?v=oHg5SJYRHA0', 2),
     ('Pesma 3', 'Izvođač 3', 'https://www.youtube.com/watch?v=DLzxrzFCyOs', 3);
+  `,
+  `
+  INSERT INTO korisnici (email, lozinka) VALUES
+    ('test@example.com', '123456');
+  `,
+  `
+  INSERT INTO lajkovanje (korisnik_id, pesma_id) VALUES
+    (1, 2);
   `,
 ];
 

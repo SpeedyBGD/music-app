@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node dist/server.js",
     "build": "tsc",
-    "dev": "tsx watch src/server.ts",
+    "dev": "tsx watch ./server.ts",
     "migrate-db": "tsx scripts/migrate.ts"
   },
   "dependencies": {
@@ -19,7 +19,6 @@
     "express": "^4.18.2",
     "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
-    "morgan": "^1.10.0",
     "typescript": "^5.3.3",
     "winston": "^3.11.0"
   },

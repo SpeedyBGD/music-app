@@ -11,7 +11,10 @@
     "resolveJsonModule": true,
     "outDir": "./dist",
     "baseUrl": "./",
-    "allowJs": true
+    "allowJs": true,
+    "paths": {
+      "@server/*": ["./*"]
+    }
   },
   "include": ["./**/*.ts"],
   "exclude": ["node_modules", "dist"]
