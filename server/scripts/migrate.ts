@@ -1,10 +1,7 @@
 import Database from 'better-sqlite3';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import fs from 'fs';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const DB_PATH = path.resolve(__dirname, '../baza.db');
+const DB_PATH = 'baza.db';
 
 if (fs.existsSync(DB_PATH)) {
   fs.unlinkSync(DB_PATH);

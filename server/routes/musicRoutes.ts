@@ -2,7 +2,7 @@ import express from 'express';
 import {
   fetchCategories,
   getFilteredSongs,
-} from '../controllers/musicController';
+} from '@server/controllers/musicController';
 
 const router = express.Router();
 
