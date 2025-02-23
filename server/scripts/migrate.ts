@@ -57,7 +57,7 @@ const migrations = [
   `,
   `
   INSERT INTO korisnici (email, lozinka) VALUES
-    ('test@example.com', '123456');
+    ('test@example.com', '$2a$10$ouaY1tC5Pn0gJSW2lE0f0e/2Iu6IHKLFxzOMwwTEBFIoDvGCXdA1i');
   `,
   `
   INSERT INTO lajkovanje (korisnik_id, pesma_id) VALUES
