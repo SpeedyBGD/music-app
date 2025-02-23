@@ -1,46 +1,79 @@
-// File: server/scripts/migrate.ts
-import sqlite3 from 'sqlite3';
-import { promisify } from 'util';
+import Database from 'better-sqlite3';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const DB_PATH = path.resolve(__dirname, '../database.db');
+const DB_PATH = path.resolve(__dirname, '../baza.db');
 
 if (fs.existsSync(DB_PATH)) {
   fs.unlinkSync(DB_PATH);
 }
 
-const db = new sqlite3.Database(DB_PATH);
-const dbRun = promisify(db.run.bind(db));
+const db = new Database(DB_PATH);
 
 const migrations = [
   `
-  CREATE TABLE songs (
+  CREATE TABLE kategorije (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT NOT NULL,
-    artist TEXT NOT NULL,
-    video_url TEXT NOT NULL
+    naziv TEXT NOT NULL
   );
   `,
   `
-  INSERT INTO songs (title, artist, video_url) VALUES
-    ('Song 1', 'Artist 1', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'),
-    ('Song 2', 'Artist 2', 'https://www.youtube.com/watch?v=oHg5SJYRHA0'),
-    ('Song 3', 'Artist 3', 'https://www.youtube.com/watch?v=DLzxrzFCyOs');
+  CREATE TABLE pesme (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    naziv TEXT NOT NULL,
+    umetnik TEXT NOT NULL,
+    video_url TEXT NOT NULL,
+    category_id INTEGER,
+    FOREIGN KEY (category_id) REFERENCES kategorije(id) ON DELETE SET NULL
+  );
+  `,
+  `
+  CREATE TABLE korisnici (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT NOT NULL UNIQUE,
+    lozinka TEXT NOT NULL,
+    jwt_token TEXT
+  );
+  `,
+  `
+  CREATE TABLE lajkovanje (
+    korisnik_id INTEGER NOT NULL,
+    pesma_id INTEGER NOT NULL,
+    UNIQUE(korisnik_id, pesma_id),
+    FOREIGN KEY (korisnik_id) REFERENCES korisnici(id) ON DELETE CASCADE,
+    FOREIGN KEY (pesma_id) REFERENCES pesme(id) ON DELETE CASCADE
+  );
+  `,
+  `
+  INSERT INTO kategorije (naziv) VALUES
+    ('Pop'),
+    ('Rock'),
+    ('Hip-hop');
+  `,
+  `
+  INSERT INTO pesme (naziv, umetnik, video_url, category_id) VALUES
+    ('Pesma 1', 'Izvođač 1', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 1),
+    ('Pesma 2', 'Izvođač 2', 'https://www.youtube.com/watch?v=oHg5SJYRHA0', 2),
+    ('Pesma 3', 'Izvođač 3', 'https://www.youtube.com/watch?v=DLzxrzFCyOs', 3);
   `,
 ];
 
-async function runMigrations(): Promise<void> {
+function runMigrations(): void {
   try {
+    db.exec('BEGIN TRANSACTION;');
+
     for (const sql of migrations) {
-      await dbRun(sql);
-      console.log('Migration executed:', sql.split('\n')[0]);
+      db.exec(sql);
+      console.log('Migracija izvršena:', sql.split('\n')[0]);
     }
-    console.log('All migrations completed successfully!');
+
+    db.exec('COMMIT;');
+    console.log('Sve migracije su uspešno završene!');
   } catch (error) {
-    console.error('Migration failed:', error);
+    db.exec('ROLLBACK;');
+    console.error('Migracija je neuspešna:', error);
   } finally {
     db.close();
   }
