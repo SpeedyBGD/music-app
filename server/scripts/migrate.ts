@@ -1,7 +1,7 @@
 import Database from 'better-sqlite3';
 import fs from 'fs';
 
-const DB_PATH = 'baza.db';
+const DB_PATH = 'baza.sqlite';
 
 if (fs.existsSync(DB_PATH)) {
   fs.unlinkSync(DB_PATH);
