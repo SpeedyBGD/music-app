@@ -1,3 +1,117 @@
-// _variables.scss
+// Theme colors
+$primary: #1db954;
+$secondary: #2a2a2a;
+$success: #1ed760;
+$info: #2e77d0;
+$warning: #ffd700;
+$danger: #ff4f4f;
+$light: #ffffff;
 $dark: #121212;
-$success: #1db954;
+
+// Gray color variants
+$gray-100: #f8f9fa;
+$gray-200: #e9ecef;
+$gray-300: #dee2e6;
+$gray-400: #ced4da;
+$gray-500: #adb5bd;
+$gray-600: #6c757d;
+$gray-700: #495057;
+$gray-800: #343a40;
+$gray-900: #212529;
+
+// Theme color variants
+$theme-colors: (
+  "primary": $primary,
+  "secondary": $secondary,
+  "success": $success,
+  "info": $info,
+  "warning": $warning,
+  "danger": $danger,
+  "light": $light,
+  "dark": $dark,
+);
+
+// Body
+$body-bg: $dark;
+$body-color: $light;
+
+// Components
+$border-radius: 0.5rem;
+$border-radius-sm: 0.25rem;
+$border-radius-lg: 0.75rem;
+$border-radius-pill: 50rem;
+
+// Cards
+$card-bg: #181818;
+$card-border-width: 0;
+$card-border-radius: $border-radius;
+$card-spacer-y: 1rem;
+$card-spacer-x: 1rem;
+
+// Buttons
+$btn-border-radius: $border-radius-pill;
+$btn-border-radius-sm: $border-radius-pill;
+$btn-border-radius-lg: $border-radius-pill;
+$btn-padding-x: 1.5rem;
+$btn-padding-y: 0.5rem;
+
+// Inputs
+$input-bg: #282828;
+$input-border-color: transparent;
+$input-color: $light;
+$input-placeholder-color: $gray-500;
+$input-border-radius: $border-radius-pill;
+$input-focus-border-color: $primary;
+$input-focus-box-shadow: none;
+
+// Navbar
+$navbar-dark-color: $light;
+$navbar-dark-hover-color: $primary;
+$navbar-padding-y: 1rem;
+$navbar-padding-x: 1rem;
+
+// Links
+$link-color: $primary;
+$link-hover-color: darken($primary, 10%);
+$link-decoration: none;
+
+// Enable gradients
+$enable-gradients: false;
+
+// Grid breakpoints
+$grid-breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+  xxl: 1400px,
+);
+
+// Container max-widths
+$container-max-widths: (
+  sm: 540px,
+  md: 720px,
+  lg: 960px,
+  xl: 1140px,
+  xxl: 1320px,
+);
+
+// Typography
+$font-family-base:
+  "Montserrat",
+  system-ui,
+  -apple-system,
+  "Segoe UI",
+  Roboto,
+  "Helvetica Neue",
+  Arial,
+  sans-serif;
+$font-size-base: 1rem;
+$font-weight-normal: 400;
+$font-weight-bold: 700;
+$line-height-base: 1.5;
+
+$headings-font-family: null;
+$headings-font-weight: 700;
+$headings-line-height: 1.2;
