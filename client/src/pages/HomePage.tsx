@@ -1,73 +1,61 @@
 import React, { useState } from "react";
-import { Form, Button, Card, Row, Col, ButtonGroup } from "react-bootstrap";
+import { Button, ButtonGroup } from "react-bootstrap";
 import { Genre } from "@/types/music";
 import { mockSongs } from "@/data/mockData";
+import HeartIcon from "@/components/icons/HeartIcon";
 
 const HomePage: React.FC = () => {
   const [selectedGenre, setSelectedGenre] = useState<Genre>("Sve");
-  const [searchQuery, setSearchQuery] = useState("");
 
   const filteredSongs = mockSongs.filter((song) => {
-    const matchesGenre =
-      selectedGenre === "Sve" || song.genre === selectedGenre;
-    const matchesSearch =
-      song.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      song.artist.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesGenre && matchesSearch;
+    return selectedGenre === "Sve" || song.genre === selectedGenre;
   });
 
   return (
-    <>
-      <Form className="mb-4">
-        <Form.Control
-          type="search"
-          placeholder="Pretražite muziku..."
-          className="bg-dark text-white border-secondary rounded-pill"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-      </Form>
+    <div className="container mt-4">
+      <div className="d-flex justify-content-center mb-4">
+        <ButtonGroup className="flex-wrap gap-2">
+          {["Sve", "Elektronika", "Hip Hop", "Pop", "World", "Rok", "Džez"].map(
+            (genre) => (
+              <Button
+                key={genre}
+                variant={selectedGenre === genre ? "success" : "dark"}
+                className="rounded-pill px-4 py-2"
+                onClick={() => setSelectedGenre(genre as Genre)}
+              >
+                {genre}
+              </Button>
+            ),
+          )}
+        </ButtonGroup>
+      </div>
 
-      <ButtonGroup className="d-flex flex-wrap gap-2 mb-4">
-        {["Sve", "Elektronika", "Hip Hop", "Pop", "World", "Rok", "Džez"].map(
-          (genre) => (
-            <Button
-              key={genre}
-              variant={selectedGenre === genre ? "success" : "dark"}
-              className="rounded-pill"
-              onClick={() => setSelectedGenre(genre as Genre)}
-            >
-              {genre}
-            </Button>
-          ),
-        )}
-      </ButtonGroup>
-
-      <Row xs={1} md={2} lg={3} className="g-4">
+      <div className="song-grid">
         {filteredSongs.map((song) => (
-          <Col key={song.id}>
-            <Card bg="dark" className="h-100 border-secondary">
-              <Card.Img
-                variant="top"
-                src={song.imageUrl}
-                className="song-image"
-              />
-              <Card.Body>
-                <Card.Title>{song.title}</Card.Title>
-                <Card.Text className="text-muted">{song.artist}</Card.Text>
-                <div className="d-flex justify-content-between align-items-center">
-                  <small className="text-muted">{song.genre}</small>
-                  <div className="d-flex align-items-center gap-2">
-                    <span>❤️</span>
-                    <span>{song.likes}</span>
-                  </div>
+          <div key={song.id} className="song-card">
+            <img src={song.imageUrl} alt={song.title} className="song-image" />
+            <div className="song-info">
+              <h3 className="mb-1 fw-semibold">{song.title}</h3>
+              <p className="text-muted mb-2 fs-6">{song.artist}</p>
+              <div className="d-flex justify-content-between align-items-center">
+                <span className="badge bg-success fs-7">{song.genre}</span>
+                <div className="d-flex align-items-center gap-1 text-muted">
+                  <HeartIcon size={18} color="currentColor" />
+                  <span className="fs-6">{song.likes}</span>
                 </div>
-              </Card.Body>
-            </Card>
-          </Col>
+              </div>
+            </div>
+          </div>
         ))}
-      </Row>
-    </>
+      </div>
+
+      {filteredSongs.length === 0 && (
+        <div className="text-center text-muted py-5">
+          <h4>Nema pronađenih pesama</h4>
+          <p>Pokušajte da promenite filtere</p>
+        </div>
+      )}
+    </div>
   );
 };
 
