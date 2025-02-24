@@ -35,9 +35,7 @@ jspm_packages/
 jest.config.js
 jest.setup.js
 
-*.js
 *.js.map
-*.css
 *.css.map
 
 baza.sqlite

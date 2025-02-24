@@ -1,0 +1,46 @@
+.bg-dark {
+  background-color: #121212 !important;
+}
+
+.song-image {
+  aspect-ratio: 16/9;
+  object-fit: cover;
+}
+
+.form-control:focus {
+  background-color: #212529;
+  border-color: #198754;
+  box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
+  color: white;
+}
+
+.form-control::placeholder {
+  color: #6c757d;
+}
+
+.btn-group {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.btn-group::-webkit-scrollbar {
+  height: 4px;
+}
+
+.btn-group::-webkit-scrollbar-track {
+  background: #212529;
+}
+
+.btn-group::-webkit-scrollbar-thumb {
+  background: #198754;
+  border-radius: 2px;
+}
+
+.card {
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
