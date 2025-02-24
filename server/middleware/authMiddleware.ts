@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import User from '@server/models/User';
 import db from '@server/utils/db';
 import { getJwtSecret } from '@server/utils/jwtUtils';
+import { checkTokenBlacklist } from '@server/services/authService';
 
 export const authenticate = (
   req: Request,
@@ -41,20 +42,4 @@ export const authenticate = (
     }
     return res.status(401).json({ message: 'Nepoznata greška' });
   }
-};
-
-export const checkTokenBlacklist = (token: string): boolean => {
-  const blacklistedToken = db
-    .prepare(
-      `
-      SELECT token_blacklisted_at 
-      FROM korisnici 
-      WHERE jwt_token = ? 
-      AND token_blacklisted_at IS NOT NULL
-      AND DATETIME(token_blacklisted_at, '+1 hour') > DATETIME('now')
-    `
-    )
-    .get(token);
-
-  return !!blacklistedToken;
 };

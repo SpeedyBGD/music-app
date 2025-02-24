@@ -108,3 +108,19 @@ const generateToken = (user: User): string => {
     expiresIn: '1h',
   });
 };
+
+export const checkTokenBlacklist = (token: string): boolean => {
+    const blacklistedToken = db
+      .prepare(
+        `
+        SELECT token_blacklisted_at 
+        FROM korisnici 
+        WHERE jwt_token = ? 
+        AND token_blacklisted_at IS NOT NULL
+        AND DATETIME(token_blacklisted_at, '+1 hour') > DATETIME('now')
+      `
+      )
+      .get(token);
+  
+    return !!blacklistedToken;
+  };
