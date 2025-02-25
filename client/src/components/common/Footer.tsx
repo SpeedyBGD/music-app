@@ -6,7 +6,7 @@ const Footer: React.FC = () => {
     <footer className="bg-dark text-white text-center py-3 border-top border-secondary">
       <Container>
         <small>
-          &copy; {new Date().getFullYear()} Muzički Vajb. Sva prava zadržana.
+          &copy; {new Date().getFullYear()} Pesme za Dušu. Sva prava zadržana.
         </small>
       </Container>
     </footer>

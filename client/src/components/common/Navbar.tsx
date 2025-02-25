@@ -17,7 +17,7 @@ const Navbar: React.FC = () => {
           <div className="d-flex align-items-center gap-3">
             <LogoIcon />
             <h1 className="m-0 text-white fs-4 d-none d-sm-block">
-              Muzički Vajb
+              Pesme za Dušu
             </h1>
           </div>
 
@@ -61,7 +61,7 @@ const Navbar: React.FC = () => {
         className="bg-dark text-white"
       >
         <Offcanvas.Header closeButton closeVariant="white">
-          <Offcanvas.Title>Muzički Vajb</Offcanvas.Title>
+          <Offcanvas.Title>Pesme za Dušu</Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
           <div className="mb-4">
