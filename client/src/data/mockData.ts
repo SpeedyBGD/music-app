@@ -1,4 +1,4 @@
-import { Song } from "../types/music";
+import { Song } from "@/types/music";
 
 export const mockSongs: Song[] = [
   {
@@ -7,7 +7,7 @@ export const mockSongs: Song[] = [
     artist: "Luna Pomračenje",
     genre: "Elektronika",
     likes: 120,
-    imageUrl: "/images/headphones.jpg",
+    youtubeId: "dQw4w9WgXcQ",
   },
   {
     id: "2",
@@ -15,7 +15,7 @@ export const mockSongs: Song[] = [
     artist: "Ritam Grada",
     genre: "Hip Hop",
     likes: 95,
-    imageUrl: "/images/urban.jpg",
+    youtubeId: "dQw4w9WgXcQ",
   },
   {
     id: "3",
@@ -23,7 +23,7 @@ export const mockSongs: Song[] = [
     artist: "Neonski Puls",
     genre: "Pop",
     likes: 150,
-    imageUrl: "/images/dj.jpg",
+    youtubeId: "dQw4w9WgXcQ",
   },
   {
     id: "4",
@@ -31,7 +31,7 @@ export const mockSongs: Song[] = [
     artist: "Zvuk Sahare",
     genre: "World",
     likes: 110,
-    imageUrl: "/images/concert.jpg",
+    youtubeId: "dQw4w9WgXcQ",
   },
   {
     id: "5",
@@ -39,7 +39,7 @@ export const mockSongs: Song[] = [
     artist: "Žice",
     genre: "Rok",
     likes: 80,
-    imageUrl: "/images/guitar.jpg",
+    youtubeId: "dQw4w9WgXcQ",
   },
   {
     id: "6",
@@ -47,6 +47,6 @@ export const mockSongs: Song[] = [
     artist: "Plava Nota",
     genre: "Džez",
     likes: 130,
-    imageUrl: "/images/jazz.jpg",
+    youtubeId: "dQw4w9WgXcQ",
   },
 ];
