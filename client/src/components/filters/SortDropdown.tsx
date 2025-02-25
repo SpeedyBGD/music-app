@@ -1,15 +1,10 @@
 import React from "react";
 import { Dropdown, Stack } from "react-bootstrap";
+import { useFilters } from "@/context/FiltersContext";
 
-interface SortDropdownProps {
-  sortBy: "newest" | "popularity";
-  onSortChange: (sortBy: "newest" | "popularity") => void;
-}
+const SortDropdown: React.FC = () => {
+  const { sortBy, setSortBy } = useFilters();
 
-const SortDropdown: React.FC<SortDropdownProps> = ({
-  sortBy,
-  onSortChange,
-}) => {
   return (
     <Stack
       direction="horizontal"
@@ -29,13 +24,13 @@ const SortDropdown: React.FC<SortDropdownProps> = ({
         <Dropdown.Menu className="bg-dark dropdown-menu-dark">
           <Dropdown.Item
             className="text-white"
-            onClick={() => onSortChange("newest")}
+            onClick={() => setSortBy("newest")}
           >
             Najnovije
           </Dropdown.Item>
           <Dropdown.Item
             className="text-white"
-            onClick={() => onSortChange("popularity")}
+            onClick={() => setSortBy("popularity")}
           >
             Popularnost
           </Dropdown.Item>

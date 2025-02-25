@@ -1,16 +1,11 @@
 import React from "react";
 import { Button } from "react-bootstrap";
 import { Genre } from "@/types/music";
+import { useFilters } from "@/context/FiltersContext";
 
-interface GenreFilterProps {
-  selectedGenre: Genre;
-  onGenreChange: (genre: Genre) => void;
-}
+const GenreFilter: React.FC = () => {
+  const { selectedGenre, setSelectedGenre } = useFilters();
 
-const GenreFilter: React.FC<GenreFilterProps> = ({
-  selectedGenre,
-  onGenreChange,
-}) => {
   const genres: Genre[] = [
     "Sve",
     "Elektronika",
@@ -28,7 +23,7 @@ const GenreFilter: React.FC<GenreFilterProps> = ({
           key={genre}
           variant={selectedGenre === genre ? "success" : "dark"}
           className="rounded-pill px-3 py-2"
-          onClick={() => onGenreChange(genre)}
+          onClick={() => setSelectedGenre(genre)}
         >
           {genre}
         </Button>
