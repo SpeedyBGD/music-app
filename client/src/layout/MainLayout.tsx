@@ -5,7 +5,7 @@ import Navbar from "@/components/common/Navbar";
 import Footer from "@/components/common/Footer";
 import HomePage from "@/pages/HomePage";
 
-const App: React.FC = () => {
+const MainLayout: React.FC = () => {
   return (
     <Router>
       <div className="bg-dark min-vh-100 text-white d-flex flex-column">
@@ -23,4 +23,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
+export default MainLayout;

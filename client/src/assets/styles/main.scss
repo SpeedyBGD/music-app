@@ -6,17 +6,9 @@
   font-family: "Montserrat", sans-serif;
 }
 
-.song-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1.5rem;
-}
-
 .song-card {
-  background: linear-gradient(145deg, #282828, #1f1f1f);
   transition: transform 0.3s;
   cursor: pointer;
-
   &:hover {
     transform: translateY(-5px);
     background: linear-gradient(145deg, #303030, #252525);
