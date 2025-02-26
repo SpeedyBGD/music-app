@@ -1,6 +1,6 @@
 import React from "react";
 import { Container } from "react-bootstrap";
-import Navbar from "@/components/common/Navbar";
+import Navbar from "@/components/common/Navbar/Navbar";
 import Footer from "@/components/common/Footer";
 
 interface MainLayoutProps {
