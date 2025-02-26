@@ -12,7 +12,7 @@ const Navbar: React.FC = () => {
 
   return (
     <header className="fixed-top bg-dark border-bottom border-secondary">
-      <Container fluid className="px-3">
+      <Container className="px-3">
         <div className="d-flex justify-content-between align-items-center py-3">
           <div className="d-flex align-items-center gap-3">
             <LogoIcon />

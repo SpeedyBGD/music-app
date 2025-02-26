@@ -8,7 +8,7 @@ const SortDropdown: React.FC = () => {
   return (
     <Stack
       direction="horizontal"
-      gap={2}
+      gap={3}
       className="align-items-center justify-content-md-end"
     >
       <span className="text-white">Sortiraj po:</span>
