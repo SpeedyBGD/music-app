@@ -1,7 +1,6 @@
 import React from "react";
 import { Offcanvas } from "react-bootstrap";
 import AuthButtons from "./AuthButtons";
-import UserMenu from "./UserMenu";
 
 interface MobileMenuProps {
   show: boolean;

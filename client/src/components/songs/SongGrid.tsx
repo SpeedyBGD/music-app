@@ -5,14 +5,15 @@ import SongCard from "@/components/songs/SongCard";
 
 interface SongGridProps {
   songs: Song[];
+  onPlay: (song: Song) => void;
 }
 
-const SongGrid: React.FC<SongGridProps> = ({ songs }) => {
+const SongGrid: React.FC<SongGridProps> = ({ songs, onPlay }) => {
   return (
     <Row className="g-4 mt-3">
       {songs.map((song) => (
         <Col key={song.id} xs={12} sm={6} md={4} lg={2} xl={2}>
-          <SongCard song={song} />
+          <SongCard song={song} onPlay={onPlay} />
         </Col>
       ))}
     </Row>

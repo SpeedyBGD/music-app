@@ -5,13 +5,17 @@ import PlayIcon from "@/components/icons/PlayIcon";
 
 interface SongCardProps {
   song: Song;
+  onPlay: (song: Song) => void;
 }
 
-const SongCard: React.FC<SongCardProps> = ({ song }) => {
+const SongCard: React.FC<SongCardProps> = ({ song, onPlay }) => {
   const thumbnailUrl = `${import.meta.env.VITE_YOUTUBE_THUMBNAIL_URL}${song.youtubeId}/hqdefault.jpg`;
 
   return (
-    <div className="song-card bg-secondary rounded-3 p-3 d-flex flex-column h-100 position-relative">
+    <div
+      className="song-card bg-secondary rounded-3 p-3 d-flex flex-column h-100 position-relative"
+      onClick={() => onPlay(song)}
+    >
       <div className="position-relative mb-3">
         <img
           src={thumbnailUrl}
