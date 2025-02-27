@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Row, Col } from "react-bootstrap";
-import { mockSongs } from "@/data/mockData";
+import { mockAllSongs } from "@/data/mockAllSongs";
 import GenreFilter from "@/components/filters/GenreFilter";
 import SortDropdown from "@/components/filters/SortDropdown";
 import SongGrid from "@/components/songs/SongGrid";
@@ -11,13 +11,13 @@ import usePlaylist from "@/hooks/usePlaylist";
 
 const HomePage: React.FC = () => {
   const { selectedGenre, sortBy } = useFilters();
-  const [currentSongs, setCurrentSongs] = useState(mockSongs);
+  const [currentSongs, setCurrentSongs] = useState(mockAllSongs);
   const [isPlayerOpen, setIsPlayerOpen] = useState(false);
 
   const { currentSong, playSong, playNextSong } = usePlaylist(currentSongs);
 
   useEffect(() => {
-    const filteredSongs = mockSongs.filter((song) => {
+    const filteredSongs = mockAllSongs.filter((song) => {
       return selectedGenre === "Sve" || song.genre === selectedGenre;
     });
 

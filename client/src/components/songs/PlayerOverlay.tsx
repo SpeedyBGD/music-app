@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import YouTube from "react-youtube";
 import { toast } from "react-toastify";
 import HeartIcon from "@/components/icons/HeartIcon";
+import NextSongIcon from "@/components/icons/NextSongIcon";
 import { Song } from "@/types/music";
 import Modal from "@/components/common/Modal";
 import { useAuth } from "@/context/AuthContext";
@@ -66,10 +67,19 @@ const PlayerOverlay: React.FC<PlayerOverlayProps> = ({
         </div>
 
         {isAuthenticated && (
-          <div className="d-flex justify-content-end mt-3">
+          <div className="d-flex justify-content-end align-items-center gap-3 mt-3">
+            <button
+              className="bg-transparent border-0 p-0"
+              onClick={onNextSong}
+              aria-label="Sledeća pesma"
+            >
+              <NextSongIcon size={24} color="white" />
+            </button>
+
             <button
               className="bg-transparent border-0 p-0"
               onClick={handleLikeClick}
+              aria-label="Like"
             >
               <HeartIcon size={24} color={isLiked ? "red" : "white"} />
             </button>
