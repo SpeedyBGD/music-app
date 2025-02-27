@@ -6,12 +6,13 @@ import SortDropdown from "@/components/filters/SortDropdown";
 import SongGrid from "@/components/songs/SongGrid";
 import { useFilters } from "@/context/FiltersContext";
 import { Song } from "@/types/music";
-import PlayerOverlay from "@/components/songs/PlayerOverlay";
+import PlayerModal from "@/components/songs/PlayerOverlay";
 
 const HomePage: React.FC = () => {
   const { selectedGenre, sortBy } = useFilters();
   const [currentSongs, setCurrentSongs] = useState(mockSongs);
   const [playingSong, setPlayingSong] = useState<Song | null>(null);
+  const [isPlayerOpen, setIsPlayerOpen] = useState(false);
 
   useEffect(() => {
     const filteredSongs = mockSongs.filter((song) => {
@@ -32,9 +33,11 @@ const HomePage: React.FC = () => {
 
   const handlePlaySong = (song: Song) => {
     setPlayingSong(song);
+    setIsPlayerOpen(true);
   };
 
   const handleClosePlayer = () => {
+    setIsPlayerOpen(false);
     setPlayingSong(null);
   };
 
@@ -58,9 +61,11 @@ const HomePage: React.FC = () => {
         </div>
       )}
 
-      {playingSong && (
-        <PlayerOverlay song={playingSong} onClose={handleClosePlayer} />
-      )}
+      <PlayerModal
+        song={playingSong}
+        isOpen={isPlayerOpen}
+        onClose={handleClosePlayer}
+      />
     </div>
   );
 };
