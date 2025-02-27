@@ -44,9 +44,8 @@ const Modal: React.FC<ModalProps> = ({
 
   return (
     <div
-      className="fixed-top vw-100 vh-100 d-flex justify-content-center align-items-center bg-dark bg-opacity-75"
+      className="fixed-top vw-100 vh-100 d-flex justify-content-center align-items-center bg-dark bg-opacity-75 z-10"
       onClick={handleBackdropClick}
-      style={{ zIndex: 1050 }}
     >
       <div className={`container px-3 ${className}`}>{children}</div>
     </div>

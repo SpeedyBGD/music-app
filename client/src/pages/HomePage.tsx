@@ -5,14 +5,16 @@ import GenreFilter from "@/components/filters/GenreFilter";
 import SortDropdown from "@/components/filters/SortDropdown";
 import SongGrid from "@/components/songs/SongGrid";
 import { useFilters } from "@/context/FiltersContext";
+import PlayerOverlay from "@/components/songs/PlayerOverlay";
 import { Song } from "@/types/music";
-import PlayerModal from "@/components/songs/PlayerOverlay";
+import usePlaylist from "@/hooks/usePlaylist";
 
 const HomePage: React.FC = () => {
   const { selectedGenre, sortBy } = useFilters();
   const [currentSongs, setCurrentSongs] = useState(mockSongs);
-  const [playingSong, setPlayingSong] = useState<Song | null>(null);
   const [isPlayerOpen, setIsPlayerOpen] = useState(false);
+
+  const { currentSong, playSong, playNextSong } = usePlaylist(currentSongs);
 
   useEffect(() => {
     const filteredSongs = mockSongs.filter((song) => {
@@ -32,13 +34,12 @@ const HomePage: React.FC = () => {
   }, [selectedGenre, sortBy]);
 
   const handlePlaySong = (song: Song) => {
-    setPlayingSong(song);
+    playSong(song.id);
     setIsPlayerOpen(true);
   };
 
   const handleClosePlayer = () => {
     setIsPlayerOpen(false);
-    setPlayingSong(null);
   };
 
   return (
@@ -61,10 +62,11 @@ const HomePage: React.FC = () => {
         </div>
       )}
 
-      <PlayerModal
-        song={playingSong}
+      <PlayerOverlay
+        song={currentSong}
         isOpen={isPlayerOpen}
         onClose={handleClosePlayer}
+        onNextSong={playNextSong}
       />
     </div>
   );

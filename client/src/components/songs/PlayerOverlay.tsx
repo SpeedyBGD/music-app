@@ -4,21 +4,35 @@ import { toast } from "react-toastify";
 import HeartIcon from "@/components/icons/HeartIcon";
 import { Song } from "@/types/music";
 import Modal from "@/components/common/Modal";
+import { useAuth } from "@/context/AuthContext";
 
-interface PlayerModalProps {
+interface PlayerOverlayProps {
   song: Song | null;
   isOpen: boolean;
   onClose: () => void;
+  onNextSong: () => void;
 }
 
-const PlayerModal: React.FC<PlayerModalProps> = ({ song, isOpen, onClose }) => {
+const PlayerOverlay: React.FC<PlayerOverlayProps> = ({
+  song,
+  isOpen,
+  onClose,
+  onNextSong,
+}) => {
   const [isLiked, setIsLiked] = useState(false);
+  const { isAuthenticated } = useAuth();
 
   const handleLikeClick = () => {
     setIsLiked(!isLiked);
     toast.success(
       isLiked ? "Uklonili ste lajk sa pesme" : "Lajkovali ste pesmu",
     );
+  };
+
+  const handleStateChange = (event: any) => {
+    if (event.data === YouTube.PlayerState.ENDED) {
+      onNextSong();
+    }
   };
 
   if (!song) return null;
@@ -44,20 +58,26 @@ const PlayerModal: React.FC<PlayerModalProps> = ({ song, isOpen, onClose }) => {
         </button>
 
         <div className="ratio ratio-16x9">
-          <YouTube videoId={song.youtubeId} opts={opts} />
+          <YouTube
+            videoId={song.youtubeId}
+            opts={opts}
+            onStateChange={handleStateChange}
+          />
         </div>
 
-        <div className="d-flex justify-content-end mt-3">
-          <button
-            className="bg-transparent border-0 p-0"
-            onClick={handleLikeClick}
-          >
-            <HeartIcon size={24} color={isLiked ? "red" : "white"} />
-          </button>
-        </div>
+        {isAuthenticated && (
+          <div className="d-flex justify-content-end mt-3">
+            <button
+              className="bg-transparent border-0 p-0"
+              onClick={handleLikeClick}
+            >
+              <HeartIcon size={24} color={isLiked ? "red" : "white"} />
+            </button>
+          </div>
+        )}
       </div>
     </Modal>
   );
 };
 
-export default PlayerModal;
+export default PlayerOverlay;

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Container } from "react-bootstrap";
+import { useAuth } from "@/context/AuthContext";
 import LogoIcon from "@/components/icons/LogoIcon";
 import MenuIcon from "@/components/icons/MenuIcon";
 import SearchBar from "./SearchBar";
@@ -9,7 +10,7 @@ import MobileMenu from "./MobileMenu";
 
 const Navbar: React.FC = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const isLoggedIn = true;
+  const { isAuthenticated } = useAuth();
 
   return (
     <header className="fixed-top bg-dark border-bottom border-secondary">
@@ -25,7 +26,7 @@ const Navbar: React.FC = () => {
           <SearchBar />
 
           <div className="d-none d-md-flex gap-2">
-            {isLoggedIn ? <UserMenu /> : <AuthButtons />}
+            {isAuthenticated ? <UserMenu /> : <AuthButtons />}
           </div>
 
           <button
@@ -40,7 +41,7 @@ const Navbar: React.FC = () => {
       <MobileMenu
         show={showMobileMenu}
         onHide={() => setShowMobileMenu(false)}
-        isLoggedIn={isLoggedIn}
+        isLoggedIn={isAuthenticated}
       />
     </header>
   );
