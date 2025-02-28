@@ -1,31 +1,32 @@
 import React from "react";
 import { Button } from "react-bootstrap";
-import { Genre } from "@/types/music";
 import { useFilters } from "@/context/FiltersContext";
 
 const GenreFilter: React.FC = () => {
-  const { selectedGenre, setSelectedGenre } = useFilters();
+  const { selectedGenre, setSelectedGenre, categories, loading } = useFilters();
 
-  const genres: Genre[] = [
-    "Sve",
-    "Elektronika",
-    "Hip Hop",
-    "Pop",
-    "World",
-    "Rok",
-    "Džez",
-  ];
+  if (loading) {
+    return;
+  }
 
   return (
     <div className="d-flex flex-wrap gap-2">
-      {genres.map((genre) => (
+      <Button
+        key="Sve"
+        variant={selectedGenre === "Sve" ? "success" : "dark"}
+        className="rounded-pill px-3 py-2"
+        onClick={() => setSelectedGenre("Sve")}
+      >
+        Sve
+      </Button>
+      {categories.map((category) => (
         <Button
-          key={genre}
-          variant={selectedGenre === genre ? "success" : "dark"}
+          key={category.id}
+          variant={selectedGenre === category.id ? "success" : "dark"}
           className="rounded-pill px-3 py-2"
-          onClick={() => setSelectedGenre(genre)}
+          onClick={() => setSelectedGenre(category.id)}
         >
-          {genre}
+          {category.naziv}
         </Button>
       ))}
     </div>

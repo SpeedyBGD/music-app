@@ -21,7 +21,7 @@ const migrations = [
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     naziv TEXT NOT NULL,
     umetnik TEXT NOT NULL,
-    video_url TEXT NOT NULL,
+    youtube_id TEXT NOT NULL,
     kategorija_id INTEGER,
     FOREIGN KEY (kategorija_id) REFERENCES kategorije(id) ON DELETE SET NULL
   );
@@ -45,16 +45,26 @@ const migrations = [
   );
   `,
   `
-  INSERT INTO kategorije (naziv) VALUES
+INSERT INTO kategorije (naziv) VALUES
     ('Pop'),
-    ('Rock'),
-    ('Hip-hop');
+    ('Rok'),
+    ('Hip Hop'),
+    ('Narodna'),
+    ('Elektronska'),
+    ('Džez');
   `,
   `
-  INSERT INTO pesme (naziv, umetnik, video_url, kategorija_id) VALUES
-    ('Pesma 1', 'Izvođač 1', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 1),
-    ('Pesma 2', 'Izvođač 2', 'https://www.youtube.com/watch?v=oHg5SJYRHA0', 2),
-    ('Pesma 3', 'Izvođač 3', 'https://www.youtube.com/watch?v=DLzxrzFCyOs', 3);
+INSERT INTO pesme (naziv, umetnik, youtube_id, kategorija_id) VALUES
+    ('Bohemian Rhapsody', 'Queen', 'fJ9rUzIMcZQ', 2),
+    ('Shape of You', 'Ed Sheeran', 'JGwWNGJdvx8', 1),
+    ('Uptown Funk', 'Mark Ronson ft. Bruno Mars', 'OPf0YbXqDm0', 1),
+    ('Humble', 'Kendrick Lamar', 'tvTRZJ-4EyI', 3),
+    ('Take Five', 'Dave Brubeck', 'vmDDOFXSgAs', 6),
+    ('Despacito', 'Luis Fonsi ft. Daddy Yankee', 'kJQP7kiw5Fk', 1),
+    ('Thunderstruck', 'AC/DC', 'v2AC41dglnM', 2),
+    ('Bad Guy', 'Billie Eilish', 'DyDfgMOUjCI', 5),
+    ('Old Town Road', 'Lil Nas X ft. Billy Ray Cyrus', '7ysFgElQtjI', 3),
+    ('Smooth Criminal', 'Michael Jackson', 'h_D3VFfhvs4', 1);
   `,
   `
   INSERT INTO korisnici (email, lozinka) VALUES

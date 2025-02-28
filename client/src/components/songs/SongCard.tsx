@@ -2,6 +2,7 @@ import React from "react";
 import { Song } from "@/types/music";
 import HeartIcon from "@/components/icons/HeartIcon";
 import PlayIcon from "@/components/icons/PlayIcon";
+import { useFilters } from "@/context/FiltersContext";
 
 interface SongCardProps {
   song: Song;
@@ -9,7 +10,10 @@ interface SongCardProps {
 }
 
 const SongCard: React.FC<SongCardProps> = ({ song, onPlay }) => {
+  const { categories } = useFilters();
   const thumbnailUrl = `${import.meta.env.VITE_YOUTUBE_THUMBNAIL_URL}${song.youtubeId}/hqdefault.jpg`;
+  const categoryName =
+    categories.find((cat) => cat.id === song.kategorijaId)?.naziv || "Sve";
 
   return (
     <div
@@ -19,7 +23,7 @@ const SongCard: React.FC<SongCardProps> = ({ song, onPlay }) => {
       <div className="position-relative mb-3">
         <img
           src={thumbnailUrl}
-          alt={song.title}
+          alt={song.naziv}
           className="w-100 rounded-3"
           style={{ objectFit: "cover", height: "180px" }}
         />
@@ -30,13 +34,13 @@ const SongCard: React.FC<SongCardProps> = ({ song, onPlay }) => {
         </div>
       </div>
       <div className="d-flex flex-column justify-content-between">
-        <h3 className="h6 mb-1 fw-semibold text-truncate">{song.title}</h3>
-        <p className="text-muted mb-2 small text-truncate">{song.artist}</p>
+        <h3 className="h6 mb-1 fw-semibold text-truncate">{song.naziv}</h3>
+        <p className="text-muted mb-2 small text-truncate">{song.umetnik}</p>
         <div className="d-flex justify-content-between align-items-center">
-          <span className="badge text-muted">{song.genre}</span>
+          <span className="badge text-muted">{categoryName}</span>
           <div className="d-flex align-items-center gap-2 text-muted">
             <HeartIcon size={16} color="gray" />
-            <span className="small">{song.likes}</span>
+            <span className="small">{song.lajkova}</span>
           </div>
         </div>
       </div>

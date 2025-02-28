@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { Song, Genre } from "@/types/music";
+import { Song } from "@/types/music";
 import usePlaylist from "@/hooks/usePlaylist";
 
 interface UseSongManagerProps {
   initialSongs: Song[];
-  selectedGenre: Genre;
+  selectedGenre: number | "Sve";
   sortBy: "newest" | "popularity";
 }
 
@@ -19,14 +19,14 @@ export const useSongManager = ({
 
   useEffect(() => {
     const filteredSongs = initialSongs.filter((song) => {
-      return selectedGenre === "Sve" || song.genre === selectedGenre;
+      return selectedGenre === "Sve" || song.kategorijaId === selectedGenre;
     });
 
     const sortedSongs = [...filteredSongs].sort((a, b) => {
       if (sortBy === "newest") {
         return b.id.localeCompare(a.id);
       } else if (sortBy === "popularity") {
-        return b.likes - a.likes;
+        return b.lajkova - a.lajkova;
       }
       return 0;
     });
