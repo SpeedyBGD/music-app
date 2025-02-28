@@ -29,14 +29,14 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
           {isLoggedIn ? (
             <>
               <Link
-                to="/favorites"
+                to="/moje-lajkovane-pesme"
                 className="text-white text-decoration-none"
                 onClick={onHide}
               >
                 Omiljene pesme
               </Link>
               <Link
-                to="/add-song"
+                to="#"
                 className="text-white text-decoration-none"
                 onClick={onHide}
               >
@@ -44,7 +44,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
               </Link>
               <hr className="border-secondary" />
               <Link
-                to="/logout"
+                to="#"
                 className="text-danger text-decoration-none"
                 onClick={onHide}
               >

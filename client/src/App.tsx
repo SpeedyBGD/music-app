@@ -16,7 +16,10 @@ const App: React.FC = () => {
           <MainLayout>
             <Routes>
               <Route path="/" element={<HomePage />} />
-              <Route path="/favorites" element={<LikedSongsPage />} />
+              <Route
+                path="/moje-lajkovane-pesme"
+                element={<LikedSongsPage />}
+              />
             </Routes>
           </MainLayout>
         </FiltersProvider>

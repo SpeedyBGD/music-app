@@ -11,14 +11,18 @@ const UserMenu: React.FC = () => {
       </Dropdown.Toggle>
 
       <Dropdown.Menu className="bg-dark dropdown-menu-dark">
-        <Dropdown.Item as={Link} to="/favorites" className="text-white">
+        <Dropdown.Item
+          as={Link}
+          to="/moje-lajkovane-pesme"
+          className="text-white"
+        >
           Omiljene pesme
         </Dropdown.Item>
-        <Dropdown.Item as={Link} to="/add-song" className="text-white">
+        <Dropdown.Item as={Link} to="#" className="text-white">
           Dodaj pesmu
         </Dropdown.Item>
         <Dropdown.Divider />
-        <Dropdown.Item as={Link} to="/logout" className="text-danger">
+        <Dropdown.Item as={Link} to="#" className="text-danger">
           Odjavi se
         </Dropdown.Item>
       </Dropdown.Menu>
