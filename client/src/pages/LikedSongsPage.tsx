@@ -1,10 +1,10 @@
 import React from "react";
-import { mockAllSongs } from "@/data/mockAllSongs";
+import { mockLikedSongs } from "@/data/mockLikedSongs";
 import { useFilters } from "@/context/FiltersContext";
 import SongCollection from "@/components/songs/SongCollection";
 import { useSongManager } from "@/hooks/useSongManager";
 
-const HomePage: React.FC = () => {
+const LikedSongsPage: React.FC = () => {
   const { selectedGenre, sortBy } = useFilters();
   const {
     currentSongs,
@@ -14,21 +14,23 @@ const HomePage: React.FC = () => {
     handleClosePlayer,
     playNextSong,
   } = useSongManager({
-    initialSongs: mockAllSongs,
+    initialSongs: mockLikedSongs,
     selectedGenre,
     sortBy,
   });
 
   return (
     <SongCollection
+      title="Moje Omiljene Pesme"
       songs={currentSongs}
       isPlayerOpen={isPlayerOpen}
       currentSong={currentSong}
       onPlaySong={handlePlaySong}
       onClosePlayer={handleClosePlayer}
       onNextSong={playNextSong}
+      titleClassName="text-secondary"
     />
   );
 };
 
-export default HomePage;
+export default LikedSongsPage;

@@ -1,5 +1,6 @@
 import React from "react";
 import { Offcanvas } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import AuthButtons from "./AuthButtons";
 
 interface MobileMenuProps {
@@ -27,16 +28,28 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
         <div className="d-flex flex-column gap-3">
           {isLoggedIn ? (
             <>
-              <a href="#/favorites" className="text-white text-decoration-none">
+              <Link
+                to="/favorites"
+                className="text-white text-decoration-none"
+                onClick={onHide}
+              >
                 Omiljene pesme
-              </a>
-              <a href="#/add-song" className="text-white text-decoration-none">
+              </Link>
+              <Link
+                to="/add-song"
+                className="text-white text-decoration-none"
+                onClick={onHide}
+              >
                 Dodaj pesmu
-              </a>
+              </Link>
               <hr className="border-secondary" />
-              <a href="#/logout" className="text-danger text-decoration-none">
+              <Link
+                to="/logout"
+                className="text-danger text-decoration-none"
+                onClick={onHide}
+              >
                 Odjavi se
-              </a>
+              </Link>
             </>
           ) : (
             <AuthButtons />

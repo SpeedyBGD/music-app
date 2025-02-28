@@ -1,5 +1,6 @@
 import React from "react";
 import { Dropdown } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import UserIcon from "@/components/icons/UserIcon";
 
 const UserMenu: React.FC = () => {
@@ -10,14 +11,14 @@ const UserMenu: React.FC = () => {
       </Dropdown.Toggle>
 
       <Dropdown.Menu className="bg-dark dropdown-menu-dark">
-        <Dropdown.Item href="#/favorites" className="text-white">
+        <Dropdown.Item as={Link} to="/favorites" className="text-white">
           Omiljene pesme
         </Dropdown.Item>
-        <Dropdown.Item href="#/add-song" className="text-white">
+        <Dropdown.Item as={Link} to="/add-song" className="text-white">
           Dodaj pesmu
         </Dropdown.Item>
         <Dropdown.Divider />
-        <Dropdown.Item href="#/logout" className="text-danger">
+        <Dropdown.Item as={Link} to="/logout" className="text-danger">
           Odjavi se
         </Dropdown.Item>
       </Dropdown.Menu>

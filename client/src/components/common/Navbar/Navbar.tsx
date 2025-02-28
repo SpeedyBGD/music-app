@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Container } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import LogoIcon from "@/components/icons/LogoIcon";
 import MenuIcon from "@/components/icons/MenuIcon";
@@ -16,12 +17,15 @@ const Navbar: React.FC = () => {
     <header className="fixed-top bg-dark border-bottom border-secondary">
       <Container className="px-3">
         <div className="d-flex justify-content-between align-items-center py-3">
-          <div className="d-flex align-items-center gap-3">
+          <Link
+            to="/"
+            className="d-flex align-items-center gap-3 text-decoration-none"
+          >
             <LogoIcon />
             <h1 className="m-0 text-white fs-4 d-none d-sm-block">
               Pesme za Dušu
             </h1>
-          </div>
+          </Link>
 
           <SearchBar />
 

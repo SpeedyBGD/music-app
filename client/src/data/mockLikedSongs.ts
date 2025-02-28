@@ -23,7 +23,7 @@ export const mockLikedSongs: Song[] = [
     artist: "Motörhead",
     genre: "Rok",
     likes: 400000,
-    youtubeId: "6xjJ2XIbGRk",
+    youtubeId: "3mbvWn1EY6g",
   },
   {
     id: "14",
@@ -55,7 +55,7 @@ export const mockLikedSongs: Song[] = [
     artist: "Black Sabbath",
     genre: "Rok",
     likes: 200000,
-    youtubeId: "5s7_WbiR79E",
+    youtubeId: "qRcYjJQ0JHg",
   },
   {
     id: "18",
