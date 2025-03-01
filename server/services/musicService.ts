@@ -61,16 +61,23 @@ export const getCategories = (): ServiceResponse<Category[]> => {
 };
 
 export const getSongsByFilters = (
-  filters: SongFilters
+  filters: SongFilters,
+  userId?: number // Add userId as an optional parameter
 ): ServiceResponse<SongWithLikes[]> => {
   try {
     let query = `
       SELECT pesme.*, 
-             IFNULL(COUNT(lajkovanje.pesma_id), 0) AS broj_lajkova
+             IFNULL(COUNT(lajkovanje.pesma_id), 0) AS broj_lajkova,
+             EXISTS (
+               SELECT 1 
+               FROM lajkovanje 
+               WHERE lajkovanje.korisnik_id = ? 
+               AND lajkovanje.pesma_id = pesme.id
+             ) AS liked_by_user
       FROM pesme
       LEFT JOIN lajkovanje ON pesme.id = lajkovanje.pesma_id
     `;
-    const params: any[] = [];
+    const params: any[] = [userId || null]; // Add userId to the parameters
     const conditions: string[] = [];
 
     if (filters.kategorija_id) {

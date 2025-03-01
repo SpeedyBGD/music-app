@@ -42,7 +42,8 @@ export const getFilteredSongs = (req: Request, res: Response) => {
     redosled: req.query.redosled === 'lajkovi' ? 'lajkovi' : undefined,
   };
 
-  const result = getSongsByFilters(filters);
+  const userId = res.locals.user?.id;
+  const result = getSongsByFilters(filters, userId);
 
   if (result.error) {
     return res.status(result.status!).json({ message: result.message });

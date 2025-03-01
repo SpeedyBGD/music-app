@@ -10,8 +10,8 @@ export interface Category {
 
 export interface SongWithLikes extends Song {
   broj_lajkova: number;
+  liked_by_user: boolean;
 }
-
 export default interface Song {
   id: number;
   naziv: string;
