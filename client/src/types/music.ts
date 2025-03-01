@@ -5,6 +5,7 @@ export interface Song {
   kategorijaId: number;
   lajkova: number;
   youtubeId: string;
+  likedByUser: number;
 }
 
 export interface Category {

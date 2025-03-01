@@ -1,5 +1,4 @@
 import React from "react";
-import { mockAllSongs } from "@/data/mockAllSongs";
 import { useFilters } from "@/context/FiltersContext";
 import SongCollection from "@/components/songs/SongCollection";
 import { useSongManager } from "@/hooks/useSongManager";
@@ -14,7 +13,7 @@ const HomePage: React.FC = () => {
     handleClosePlayer,
     playNextSong,
   } = useSongManager({
-    initialSongs: mockAllSongs,
+    initialSongs: [],
     selectedGenre,
     sortBy,
   });

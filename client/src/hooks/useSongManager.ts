@@ -1,38 +1,45 @@
 import { useState, useEffect } from "react";
 import { Song } from "@/types/music";
 import usePlaylist from "@/hooks/usePlaylist";
+import { fetchAllSongs, fetchLikedSongs } from "@/services/musicService";
 
 interface UseSongManagerProps {
   initialSongs: Song[];
   selectedGenre: number | "Sve";
   sortBy: "newest" | "popularity";
+  isLikedSongs?: boolean;
 }
 
 export const useSongManager = ({
   initialSongs,
   selectedGenre,
   sortBy,
+  isLikedSongs = false,
 }: UseSongManagerProps) => {
   const [currentSongs, setCurrentSongs] = useState(initialSongs);
   const [isPlayerOpen, setIsPlayerOpen] = useState(false);
   const { currentSong, playSong, playNextSong } = usePlaylist(currentSongs);
 
   useEffect(() => {
-    const filteredSongs = initialSongs.filter((song) => {
-      return selectedGenre === "Sve" || song.kategorijaId === selectedGenre;
-    });
-
-    const sortedSongs = [...filteredSongs].sort((a, b) => {
-      if (sortBy === "newest") {
-        return b.id.localeCompare(a.id);
-      } else if (sortBy === "popularity") {
-        return b.lajkova - a.lajkova;
+    const fetchSongs = async () => {
+      try {
+        const songs = isLikedSongs
+          ? await fetchLikedSongs(
+              sortBy,
+              selectedGenre === "Sve" ? undefined : selectedGenre,
+            )
+          : await fetchAllSongs(
+              sortBy,
+              selectedGenre === "Sve" ? undefined : selectedGenre,
+            );
+        setCurrentSongs(songs);
+      } catch (error) {
+        console.error("Error fetching songs:", error);
       }
-      return 0;
-    });
+    };
 
-    setCurrentSongs(sortedSongs);
-  }, [selectedGenre, sortBy, initialSongs]);
+    fetchSongs();
+  }, [selectedGenre, sortBy, isLikedSongs]);
 
   const handlePlaySong = (song: Song) => {
     playSong(song.id);

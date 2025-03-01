@@ -1,6 +1,6 @@
 export interface SongFilters {
-  kategorija_id?: number;
-  redosled?: 'lajkovi' | 'datum';
+  kategorijaId?: number;
+  redosled?: 'lajkovi';
 }
 
 export interface Category {
@@ -9,13 +9,13 @@ export interface Category {
 }
 
 export interface SongWithLikes extends Song {
-  broj_lajkova: number;
-  liked_by_user: boolean;
+  brojLajkova: number;
 }
+
 export default interface Song {
   id: number;
   naziv: string;
   umetnik: string;
-  video_url: string;
-  kategorija_id: number;
+  videoUrl: string;
+  kategorijaId: number;
 }

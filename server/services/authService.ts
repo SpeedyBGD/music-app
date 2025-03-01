@@ -82,8 +82,8 @@ export const logoutService = (token: string, userId: number): AuthResponse => {
 
     const stmt = db.prepare(`
         UPDATE korisnici 
-        SET jwt_token = ?, 
-            token_blacklisted_at = DATETIME('now')
+        SET jwtToken = ?, 
+            tokenBlacklistedAt = DATETIME('now')
         WHERE id = ?
       `);
 
@@ -113,11 +113,11 @@ export const checkTokenBlacklist = (token: string): boolean => {
   const blacklistedToken = db
     .prepare(
       `
-        SELECT token_blacklisted_at 
+        SELECT tokenBlacklistedAt 
         FROM korisnici 
-        WHERE jwt_token = ? 
-        AND token_blacklisted_at IS NOT NULL
-        AND DATETIME(token_blacklisted_at, '+1 hour') > DATETIME('now')
+        WHERE jwtToken = ? 
+        AND tokenBlacklistedAt IS NOT NULL
+        AND DATETIME(tokenBlacklistedAt, '+1 hour') > DATETIME('now')
       `
     )
     .get(token);

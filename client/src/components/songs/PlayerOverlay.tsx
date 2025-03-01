@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import YouTube from "react-youtube";
 import { toast } from "react-toastify";
 import HeartIcon from "@/components/icons/HeartIcon";
@@ -6,6 +6,7 @@ import NextSongIcon from "@/components/icons/NextSongIcon";
 import { Song } from "@/types/music";
 import Modal from "@/components/common/Modal";
 import { useAuth } from "@/context/AuthContext";
+import { likeSong, unlikeSong } from "@/services/musicService";
 
 interface PlayerOverlayProps {
   song: Song | null;
@@ -21,13 +22,31 @@ const PlayerOverlay: React.FC<PlayerOverlayProps> = ({
   onNextSong,
 }) => {
   const [isLiked, setIsLiked] = useState(false);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, token } = useAuth();
 
-  const handleLikeClick = () => {
-    setIsLiked(!isLiked);
-    toast.success(
-      isLiked ? "Uklonili ste lajk sa pesme" : "Lajkovali ste pesmu",
-    );
+  useEffect(() => {
+    if (song) {
+      setIsLiked(song.likedByUser === 1);
+    }
+  }, [song]);
+
+  const handleLikeClick = async () => {
+    if (!isAuthenticated || !song || !token) return;
+
+    try {
+      if (isLiked) {
+        await unlikeSong(song.id, token);
+      } else {
+        await likeSong(song.id, token);
+      }
+      setIsLiked(!isLiked);
+      toast.success(
+        isLiked ? "Uklonili ste lajk sa pesme" : "Lajkovali ste pesmu",
+      );
+    } catch (error) {
+      console.error("Error toggling like:", error);
+      toast.error("Došlo je do greške prilikom lajkovanja pesme.");
+    }
   };
 
   const handleStateChange = (event: any) => {

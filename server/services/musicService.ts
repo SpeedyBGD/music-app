@@ -26,9 +26,7 @@ export const likeSongService = (
     }
 
     const existingLike = db
-      .prepare(
-        'SELECT * FROM lajkovanje WHERE korisnik_id = ? AND pesma_id = ?'
-      )
+      .prepare('SELECT * FROM lajkovanje WHERE korisnikId = ? AND pesmaId = ?')
       .get(userId, songId);
 
     if (existingLike) {
@@ -40,7 +38,7 @@ export const likeSongService = (
     }
 
     db.prepare(
-      'INSERT INTO lajkovanje (korisnik_id, pesma_id) VALUES (?, ?)'
+      'INSERT INTO lajkovanje (korisnikId, pesmaId) VALUES (?, ?)'
     ).run(userId, songId);
 
     return { error: false };
@@ -61,10 +59,11 @@ export const getCategories = (): ServiceResponse<Category[]> => {
 };
 
 export const getSongsByFilters = (
-  filters: SongFilters
+  filters: SongFilters,
+  userId?: number
 ): ServiceResponse<SongWithLikes[]> => {
   try {
-    const { query, params } = buildSongQuery(filters); // Use the helper function
+    const { query, params } = buildSongQuery(filters, userId);
     const songs = db.prepare(query).all(...params) as SongWithLikes[];
     return { data: songs };
   } catch (error) {
@@ -77,9 +76,40 @@ export const getLikedSongsByFilter = (
   filters?: SongFilters
 ): ServiceResponse<SongWithLikes[]> => {
   try {
-    const { query, params } = buildSongQuery(filters, userId); // Use the helper function
+    const { query, params } = buildLikedSongsQuery(filters, userId);
     const songs = db.prepare(query).all(...params) as SongWithLikes[];
     return { data: songs };
+  } catch (error) {
+    return { error: true, status: 500, message: 'Greška u bazi podataka' };
+  }
+};
+
+export const unlikeSongService = (
+  userId: number,
+  songId: number
+): ServiceResponse<void> => {
+  try {
+    const song = db.prepare('SELECT * FROM pesme WHERE id = ?').get(songId) as
+      | Song
+      | undefined;
+
+    if (!song) {
+      return { error: true, status: 404, message: 'Pesma nije pronađena' };
+    }
+
+    const existingLike = db
+      .prepare('SELECT * FROM lajkovanje WHERE korisnikId = ? AND pesmaId = ?')
+      .get(userId, songId);
+
+    if (!existingLike) {
+      return { error: true, status: 400, message: 'Niste lajkovali ovu pesmu' };
+    }
+
+    db.prepare(
+      'DELETE FROM lajkovanje WHERE korisnikId = ? AND pesmaId = ?'
+    ).run(userId, songId);
+
+    return { error: false };
   } catch (error) {
     return { error: true, status: 500, message: 'Greška u bazi podataka' };
   }
@@ -91,21 +121,22 @@ const buildSongQuery = (
 ): { query: string; params: any[] } => {
   let query = `
     SELECT pesme.*, 
-           IFNULL(COUNT(lajkovanje.pesma_id), 0) AS broj_lajkova
+           IFNULL(COUNT(lajkovanje.pesmaId), 0) AS brojLajkova,
+           EXISTS (
+             SELECT 1 
+             FROM lajkovanje 
+             WHERE lajkovanje.korisnikId = ? 
+               AND lajkovanje.pesmaId = pesme.id
+           ) AS liked_by_user
     FROM pesme
-    LEFT JOIN lajkovanje ON pesme.id = lajkovanje.pesma_id
+    LEFT JOIN lajkovanje ON pesme.id = lajkovanje.pesmaId
   `;
-  const params: any[] = [];
+  const params: any[] = [userId || null];
   const conditions: string[] = [];
 
-  if (userId) {
-    conditions.push('lajkovanje.korisnik_id = ?');
-    params.push(userId);
-  }
-
-  if (filters?.kategorija_id) {
-    conditions.push('kategorija_id = ?');
-    params.push(filters.kategorija_id);
+  if (filters?.kategorijaId) {
+    conditions.push('pesme.kategorijaId = ?');
+    params.push(filters.kategorijaId);
   }
 
   if (conditions.length > 0) {
@@ -115,7 +146,42 @@ const buildSongQuery = (
   query += ' GROUP BY pesme.id';
 
   if (filters?.redosled === 'lajkovi') {
-    query += ' ORDER BY broj_lajkova DESC';
+    query += ' ORDER BY brojLajkova DESC';
+  } else if (filters?.redosled === 'datum') {
+    query += ' ORDER BY datum DESC';
+  }
+
+  return { query, params };
+};
+
+const buildLikedSongsQuery = (
+  filters?: SongFilters,
+  userId?: number
+): { query: string; params: any[] } => {
+  let query = `
+    SELECT pesme.*, 
+           IFNULL(COUNT(lajkovanje.pesmaId), 0) AS brojLajkova,
+           TRUE AS liked_by_user
+    FROM pesme
+    INNER JOIN lajkovanje ON pesme.id = lajkovanje.pesmaId
+    WHERE lajkovanje.korisnikId = ?
+  `;
+  const params: any[] = [userId];
+  const conditions: string[] = [];
+
+  if (filters?.kategorijaId) {
+    conditions.push('pesme.kategorijaId = ?');
+    params.push(filters.kategorijaId);
+  }
+
+  if (conditions.length > 0) {
+    query += ' AND ' + conditions.join(' AND ');
+  }
+
+  query += ' GROUP BY pesme.id';
+
+  if (filters?.redosled === 'lajkovi') {
+    query += ' ORDER BY brojLajkova DESC';
   } else if (filters?.redosled === 'datum') {
     query += ' ORDER BY datum DESC';
   }

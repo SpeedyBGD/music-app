@@ -2,12 +2,12 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { Category, fetchCategories } from "@/services/categoryService";
 
 interface FiltersContextType {
-  selectedGenre: number | "Sve"; // Use `number` for category IDs or "Sve" for all
+  selectedGenre: number | "Sve";
   setSelectedGenre: (genre: number | "Sve") => void;
   sortBy: "newest" | "popularity";
   setSortBy: (sortBy: "newest" | "popularity") => void;
-  categories: Category[]; // Add categories to the context
-  loading: boolean; // Add loading state
+  categories: Category[];
+  loading: boolean;
 }
 
 const FiltersContext = createContext<FiltersContextType | undefined>(undefined);

@@ -11,12 +11,14 @@ export const authenticate = (
   next: NextFunction
 ) => {
   try {
-    const JWT_SECRET = getJwtSecret();
     const token = req.headers['authorization']?.split(' ')[1];
 
     if (!token) {
-      return res.status(401).json({ message: 'Nema tokena' });
+      res.locals.user = null;
+      return next();
     }
+
+    const JWT_SECRET = getJwtSecret();
 
     if (checkTokenBlacklist(token)) {
       return res.status(401).json({ message: 'Token je poništen' });

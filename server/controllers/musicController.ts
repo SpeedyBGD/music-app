@@ -36,13 +36,10 @@ export const fetchCategories = (req: Request, res: Response) => {
 
 export const getFilteredSongs = (req: Request, res: Response) => {
   const filters: SongFilters = {
-    kategorija_id: req.query.kategorija_id
-      ? parseInt(req.query.kategorija_id as string)
+    kategorijaId: req.query.kategorijaId
+      ? parseInt(req.query.kategorijaId as string)
       : undefined,
-    redosled:
-      req.query.redosled === 'lajkovi' || req.query.redosled === 'datum'
-        ? req.query.redosled
-        : undefined,
+    redosled: req.query.redosled === 'lajkovi' ? 'lajkovi' : undefined,
   };
 
   const result = getSongsByFilters(filters);
@@ -56,21 +53,31 @@ export const getFilteredSongs = (req: Request, res: Response) => {
 
 export const getLikedSongs = (req: Request, res: Response) => {
   const userId = res.locals.user.id;
-  const filters: SongFilters = {
-    kategorija_id: req.query.kategorija_id
-      ? parseInt(req.query.kategorija_id as string)
-      : undefined,
-    redosled:
-      req.query.redosled === 'lajkovi' || req.query.redosled === 'datum'
-        ? req.query.redosled
-        : undefined,
-  };
 
-  const result = getLikedSongsByFilter(userId, filters);
+  const result = getLikedSongsByFilter(userId);
 
   if (result.error) {
     return res.status(result.status!).json({ message: result.message });
   }
 
   return res.status(200).json(result.data);
+};
+
+export const unlikeSong = (req: Request, res: Response) => {
+  const userId = res.locals.user.id;
+  const { songId } = req.body;
+
+  if (!songId) {
+    return res.status(400).json({ message: 'ID pesme je obavezan' });
+  }
+
+  const result = getLikedSongsByFilter(userId, songId);
+
+  if (result.error) {
+    return res.status(result.status!).json({ message: result.message });
+  }
+
+  return res
+    .status(200)
+    .json({ message: 'Pesma je uspešno uklonjena iz lajkovanih' });
 };
