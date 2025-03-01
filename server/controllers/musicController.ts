@@ -3,7 +3,7 @@ import {
   likeSongService,
   getCategories,
   getSongsByFilters,
-  getLikedSongsService,
+  getLikedSongsByFilter,
 } from '@server/services/musicService';
 import { SongFilters } from '@server/models/Song';
 
@@ -39,11 +39,13 @@ export const getFilteredSongs = (req: Request, res: Response) => {
     kategorija_id: req.query.kategorija_id
       ? parseInt(req.query.kategorija_id as string)
       : undefined,
-    redosled: req.query.redosled === 'lajkovi' ? 'lajkovi' : undefined,
+    redosled:
+      req.query.redosled === 'lajkovi' || req.query.redosled === 'datum'
+        ? req.query.redosled
+        : undefined,
   };
 
-  const userId = res.locals.user?.id;
-  const result = getSongsByFilters(filters, userId);
+  const result = getSongsByFilters(filters);
 
   if (result.error) {
     return res.status(result.status!).json({ message: result.message });
@@ -54,8 +56,17 @@ export const getFilteredSongs = (req: Request, res: Response) => {
 
 export const getLikedSongs = (req: Request, res: Response) => {
   const userId = res.locals.user.id;
+  const filters: SongFilters = {
+    kategorija_id: req.query.kategorija_id
+      ? parseInt(req.query.kategorija_id as string)
+      : undefined,
+    redosled:
+      req.query.redosled === 'lajkovi' || req.query.redosled === 'datum'
+        ? req.query.redosled
+        : undefined,
+  };
 
-  const result = getLikedSongsService(userId);
+  const result = getLikedSongsByFilter(userId, filters);
 
   if (result.error) {
     return res.status(result.status!).json({ message: result.message });

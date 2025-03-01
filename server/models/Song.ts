@@ -1,6 +1,6 @@
 export interface SongFilters {
   kategorija_id?: number;
-  redosled?: 'lajkovi';
+  redosled?: 'lajkovi' | 'datum';
 }
 
 export interface Category {

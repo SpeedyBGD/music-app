@@ -61,40 +61,10 @@ export const getCategories = (): ServiceResponse<Category[]> => {
 };
 
 export const getSongsByFilters = (
-  filters: SongFilters,
-  userId?: number // Add userId as an optional parameter
+  filters: SongFilters
 ): ServiceResponse<SongWithLikes[]> => {
   try {
-    let query = `
-      SELECT pesme.*, 
-             IFNULL(COUNT(lajkovanje.pesma_id), 0) AS broj_lajkova,
-             EXISTS (
-               SELECT 1 
-               FROM lajkovanje 
-               WHERE lajkovanje.korisnik_id = ? 
-               AND lajkovanje.pesma_id = pesme.id
-             ) AS liked_by_user
-      FROM pesme
-      LEFT JOIN lajkovanje ON pesme.id = lajkovanje.pesma_id
-    `;
-    const params: any[] = [userId || null]; // Add userId to the parameters
-    const conditions: string[] = [];
-
-    if (filters.kategorija_id) {
-      conditions.push('kategorija_id = ?');
-      params.push(filters.kategorija_id);
-    }
-
-    if (conditions.length > 0) {
-      query += ' WHERE ' + conditions.join(' AND ');
-    }
-
-    query += ' GROUP BY pesme.id';
-
-    if (filters.redosled === 'lajkovi') {
-      query += ' ORDER BY broj_lajkova DESC';
-    }
-
+    const { query, params } = buildSongQuery(filters); // Use the helper function
     const songs = db.prepare(query).all(...params) as SongWithLikes[];
     return { data: songs };
   } catch (error) {
@@ -102,22 +72,53 @@ export const getSongsByFilters = (
   }
 };
 
-export const getLikedSongsService = (
-  userId: number
+export const getLikedSongsByFilter = (
+  userId: number,
+  filters?: SongFilters
 ): ServiceResponse<SongWithLikes[]> => {
   try {
-    const query = `
-      SELECT pesme.*, 
-             IFNULL(COUNT(lajkovanje.pesma_id), 0) AS broj_lajkova
-      FROM pesme
-      LEFT JOIN lajkovanje ON pesme.id = lajkovanje.pesma_id
-      WHERE lajkovanje.korisnik_id = ?
-      GROUP BY pesme.id
-    `;
-
-    const songs = db.prepare(query).all(userId) as SongWithLikes[];
+    const { query, params } = buildSongQuery(filters, userId); // Use the helper function
+    const songs = db.prepare(query).all(...params) as SongWithLikes[];
     return { data: songs };
   } catch (error) {
     return { error: true, status: 500, message: 'Greška u bazi podataka' };
   }
+};
+
+const buildSongQuery = (
+  filters?: SongFilters,
+  userId?: number
+): { query: string; params: any[] } => {
+  let query = `
+    SELECT pesme.*, 
+           IFNULL(COUNT(lajkovanje.pesma_id), 0) AS broj_lajkova
+    FROM pesme
+    LEFT JOIN lajkovanje ON pesme.id = lajkovanje.pesma_id
+  `;
+  const params: any[] = [];
+  const conditions: string[] = [];
+
+  if (userId) {
+    conditions.push('lajkovanje.korisnik_id = ?');
+    params.push(userId);
+  }
+
+  if (filters?.kategorija_id) {
+    conditions.push('kategorija_id = ?');
+    params.push(filters.kategorija_id);
+  }
+
+  if (conditions.length > 0) {
+    query += ' WHERE ' + conditions.join(' AND ');
+  }
+
+  query += ' GROUP BY pesme.id';
+
+  if (filters?.redosled === 'lajkovi') {
+    query += ' ORDER BY broj_lajkova DESC';
+  } else if (filters?.redosled === 'datum') {
+    query += ' ORDER BY datum DESC';
+  }
+
+  return { query, params };
 };

@@ -17,12 +17,13 @@ const migrations = [
   );
   `,
   `
-  CREATE TABLE pesme (
+ CREATE TABLE pesme (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     naziv TEXT NOT NULL,
     umetnik TEXT NOT NULL,
     youtube_id TEXT NOT NULL,
     kategorija_id INTEGER,
+    datum TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (kategorija_id) REFERENCES kategorije(id) ON DELETE SET NULL
   );
   `,
@@ -54,17 +55,17 @@ INSERT INTO kategorije (naziv) VALUES
     ('Džez');
   `,
   `
-INSERT INTO pesme (naziv, umetnik, youtube_id, kategorija_id) VALUES
-    ('Bohemian Rhapsody', 'Queen', 'fJ9rUzIMcZQ', 2),
-    ('Shape of You', 'Ed Sheeran', 'JGwWNGJdvx8', 1),
-    ('Uptown Funk', 'Mark Ronson ft. Bruno Mars', 'OPf0YbXqDm0', 1),
-    ('Humble', 'Kendrick Lamar', 'tvTRZJ-4EyI', 3),
-    ('Take Five', 'Dave Brubeck', 'vmDDOFXSgAs', 6),
-    ('Despacito', 'Luis Fonsi ft. Daddy Yankee', 'kJQP7kiw5Fk', 1),
-    ('Thunderstruck', 'AC/DC', 'v2AC41dglnM', 2),
-    ('Bad Guy', 'Billie Eilish', 'DyDfgMOUjCI', 5),
-    ('Old Town Road', 'Lil Nas X ft. Billy Ray Cyrus', '7ysFgElQtjI', 3),
-    ('Smooth Criminal', 'Michael Jackson', 'h_D3VFfhvs4', 1);
+  INSERT INTO pesme (naziv, umetnik, youtube_id, kategorija_id, datum) VALUES
+    ('Bohemian Rhapsody', 'Queen', 'fJ9rUzIMcZQ', 2, CURRENT_TIMESTAMP),
+    ('Shape of You', 'Ed Sheeran', 'JGwWNGJdvx8', 1, CURRENT_TIMESTAMP),
+    ('Uptown Funk', 'Mark Ronson ft. Bruno Mars', 'OPf0YbXqDm0', 1, CURRENT_TIMESTAMP),
+    ('Humble', 'Kendrick Lamar', 'tvTRZJ-4EyI', 3, CURRENT_TIMESTAMP),
+    ('Take Five', 'Dave Brubeck', 'vmDDOFXSgAs', 6, CURRENT_TIMESTAMP),
+    ('Despacito', 'Luis Fonsi ft. Daddy Yankee', 'kJQP7kiw5Fk', 1, CURRENT_TIMESTAMP),
+    ('Thunderstruck', 'AC/DC', 'v2AC41dglnM', 2, CURRENT_TIMESTAMP),
+    ('Bad Guy', 'Billie Eilish', 'DyDfgMOUjCI', 5, CURRENT_TIMESTAMP),
+    ('Old Town Road', 'Lil Nas X ft. Billy Ray Cyrus', '7ysFgElQtjI', 3, CURRENT_TIMESTAMP),
+    ('Smooth Criminal', 'Michael Jackson', 'h_D3VFfhvs4', 1, CURRENT_TIMESTAMP);
   `,
   `
   INSERT INTO korisnici (email, lozinka) VALUES
