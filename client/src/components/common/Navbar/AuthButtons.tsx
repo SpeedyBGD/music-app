@@ -1,17 +1,8 @@
 import React from "react";
-import { Button } from "react-bootstrap";
+import AuthButtons from "@/components/auth/AuthButtons";
 
-const AuthButtons: React.FC = () => {
-  return (
-    <>
-      <Button variant="outline-light" className="rounded-pill px-4 py-2">
-        Prijavi se
-      </Button>
-      <Button variant="light" className="rounded-pill px-4 py-2 ms-2">
-        Registruj se
-      </Button>
-    </>
-  );
+const NavbarAuthButtons: React.FC = () => {
+  return <AuthButtons />;
 };
 
-export default AuthButtons;
+export default NavbarAuthButtons;

@@ -24,7 +24,7 @@ const AppRoutes: React.FC = () => {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route
-        path="/lajkovane-pesme"
+        path="/moje-lajkovane-pesme"
         element={
           <ProtectedRoute>
             <LikedSongsPage />

@@ -2,8 +2,11 @@ import React from "react";
 import { Dropdown } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import UserIcon from "@/components/icons/UserIcon";
+import useLogout from "@/hooks/useLogout";
 
 const UserMenu: React.FC = () => {
+  const handleLogout = useLogout();
+
   return (
     <Dropdown>
       <Dropdown.Toggle variant="link" className="text-white p-0">
@@ -22,7 +25,12 @@ const UserMenu: React.FC = () => {
           Dodaj pesmu
         </Dropdown.Item>
         <Dropdown.Divider />
-        <Dropdown.Item as={Link} to="#" className="text-danger">
+        <Dropdown.Item
+          as={Link}
+          to="#"
+          className="text-danger"
+          onClick={handleLogout}
+        >
           Odjavi se
         </Dropdown.Item>
       </Dropdown.Menu>

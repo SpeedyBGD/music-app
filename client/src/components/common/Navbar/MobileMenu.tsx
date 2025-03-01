@@ -2,6 +2,7 @@ import React from "react";
 import { Offcanvas } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import AuthButtons from "./AuthButtons";
+import useLogout from "@/hooks/useLogout"; // Import the custom hook
 
 interface MobileMenuProps {
   show: boolean;
@@ -14,6 +15,8 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
   onHide,
   isLoggedIn,
 }) => {
+  const handleLogout = useLogout();
+
   return (
     <Offcanvas
       show={show}
@@ -46,7 +49,10 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
               <Link
                 to="#"
                 className="text-danger text-decoration-none"
-                onClick={onHide}
+                onClick={() => {
+                  handleLogout();
+                  onHide();
+                }}
               >
                 Odjavi se
               </Link>
