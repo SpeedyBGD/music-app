@@ -94,3 +94,23 @@ export const getSongsByFilters = (
     return { error: true, status: 500, message: 'Greška u bazi podataka' };
   }
 };
+
+export const getLikedSongsService = (
+  userId: number
+): ServiceResponse<SongWithLikes[]> => {
+  try {
+    const query = `
+      SELECT pesme.*, 
+             IFNULL(COUNT(lajkovanje.pesma_id), 0) AS broj_lajkova
+      FROM pesme
+      LEFT JOIN lajkovanje ON pesme.id = lajkovanje.pesma_id
+      WHERE lajkovanje.korisnik_id = ?
+      GROUP BY pesme.id
+    `;
+
+    const songs = db.prepare(query).all(userId) as SongWithLikes[];
+    return { data: songs };
+  } catch (error) {
+    return { error: true, status: 500, message: 'Greška u bazi podataka' };
+  }
+};

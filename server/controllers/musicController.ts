@@ -3,6 +3,7 @@ import {
   likeSongService,
   getCategories,
   getSongsByFilters,
+  getLikedSongsService,
 } from '@server/services/musicService';
 import { SongFilters } from '@server/models/Song';
 
@@ -35,7 +36,7 @@ export const fetchCategories = (req: Request, res: Response) => {
 
 export const getFilteredSongs = (req: Request, res: Response) => {
   const filters: SongFilters = {
-    kategorija_id: req.query.kategorija_id 
+    kategorija_id: req.query.kategorija_id
       ? parseInt(req.query.kategorija_id as string)
       : undefined,
     redosled: req.query.redosled === 'lajkovi' ? 'lajkovi' : undefined,
@@ -48,4 +49,16 @@ export const getFilteredSongs = (req: Request, res: Response) => {
   }
 
   return res.json(result.data);
+};
+
+export const getLikedSongs = (req: Request, res: Response) => {
+  const userId = res.locals.user.id;
+
+  const result = getLikedSongsService(userId);
+
+  if (result.error) {
+    return res.status(result.status!).json({ message: result.message });
+  }
+
+  return res.status(200).json(result.data);
 };
