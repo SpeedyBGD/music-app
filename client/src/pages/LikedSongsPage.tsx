@@ -1,3 +1,4 @@
+// src/pages/LikedSongsPage.tsx
 import React, { useEffect } from "react";
 import { useFilters } from "@/context/FiltersContext";
 import { usePlayer } from "@/context/PlayerContext";
@@ -11,9 +12,12 @@ const LikedSongsPage: React.FC = () => {
   const { isAuthenticated } = useAuth();
 
   useEffect(() => {
-    fetchLikedSongs(sortBy, selectedGenre === "Sve" ? undefined : selectedGenre)
-      .then(setSongs)
-      .catch((error) => console.error("Error fetching liked songs:", error));
+    fetchLikedSongs(
+      sortBy,
+      selectedGenre === "Sve" ? undefined : selectedGenre,
+    ).then((songs) => {
+      setSongs(songs);
+    });
   }, [selectedGenre, sortBy, setSongs, isAuthenticated]);
 
   return (

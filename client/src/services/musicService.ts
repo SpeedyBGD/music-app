@@ -1,5 +1,5 @@
-import axios from "axios";
-import { Song } from "@/types/music";
+// src/services/musicService.ts
+import axiosInstance from "./axiosInterceptor";
 import { API_BASE_URL } from "@/utils/constants";
 
 export const fetchAllSongs = (
@@ -7,7 +7,7 @@ export const fetchAllSongs = (
   categoryId?: number,
 ) => {
   const token = localStorage.getItem("token");
-  return axios
+  return axiosInstance
     .get(`${API_BASE_URL}/music`, {
       params: {
         redosled: sortBy === "popularity" ? "lajkovi" : "datum",
@@ -23,7 +23,7 @@ export const fetchLikedSongs = (
   categoryId?: number,
 ) => {
   const token = localStorage.getItem("token");
-  return axios
+  return axiosInstance
     .get(`${API_BASE_URL}/music/liked`, {
       params: {
         redosled: sortBy === "popularity" ? "lajkovi" : "datum",
@@ -35,14 +35,14 @@ export const fetchLikedSongs = (
 };
 
 export const likeSong = (songId: string, token: string) =>
-  axios.post(
+  axiosInstance.post(
     `${API_BASE_URL}/music/like`,
     { songId },
     { headers: { Authorization: `Bearer ${token}` } },
   );
 
 export const unlikeSong = (songId: string, token: string) =>
-  axios.post(
+  axiosInstance.post(
     `${API_BASE_URL}/music/unlike`,
     { songId },
     { headers: { Authorization: `Bearer ${token}` } },

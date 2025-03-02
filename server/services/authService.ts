@@ -41,7 +41,7 @@ export const registerService = async (
     .get(email) as User | undefined;
 
   if (existingUser) {
-    return { error: true, status: 400, message: 'Ovaj email već postoji' };
+    return { status: 400, message: 'Ovaj email već postoji' };
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -66,7 +66,6 @@ export const logoutService = (token: string, userId: number): AuthResponse => {
 
     if (decoded.id !== userId) {
       return {
-        error: true,
         status: 401,
         message: 'Token ne pripada ovom korisniku',
       };
@@ -81,10 +80,9 @@ export const logoutService = (token: string, userId: number): AuthResponse => {
     `
     ).run(token, userId);
 
-    return { error: false, message: 'Uspešno ste se odjavili' };
+    return { message: 'Uspešno ste se odjavili' };
   } catch (error) {
     return {
-      error: true,
       status: 401,
       message: 'Nevalidan ili istekao token',
     };

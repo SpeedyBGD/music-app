@@ -3,9 +3,26 @@ import { Button, Modal } from "react-bootstrap";
 import LoginForm from "@/components/auth/LoginForm";
 import RegisterForm from "@/components/auth/RegisterForm";
 
-const AuthButtons: React.FC = () => {
-  const [showLogin, setShowLogin] = useState(false);
-  const [showRegister, setShowRegister] = useState(false);
+interface AuthButtonsProps {
+  showLogin?: boolean;
+  setShowLogin?: (value: boolean) => void;
+  showRegister?: boolean;
+  setShowRegister?: (value: boolean) => void;
+}
+
+const AuthButtons: React.FC<AuthButtonsProps> = ({
+  showLogin: controlledShowLogin,
+  setShowLogin: controlledSetShowLogin,
+  showRegister: controlledShowRegister,
+  setShowRegister: controlledSetShowRegister,
+}) => {
+  const [localShowLogin, setLocalShowLogin] = useState(false);
+  const [localShowRegister, setLocalShowRegister] = useState(false);
+
+  const showLogin = controlledShowLogin ?? localShowLogin;
+  const setShowLogin = controlledSetShowLogin ?? setLocalShowLogin;
+  const showRegister = controlledShowRegister ?? localShowRegister;
+  const setShowRegister = controlledSetShowRegister ?? setLocalShowRegister;
 
   return (
     <>
