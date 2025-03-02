@@ -26,13 +26,10 @@ const Navbar: React.FC = () => {
               Pesme za Dušu
             </h1>
           </Link>
-
           <SearchBar />
-
           <div className="d-none d-md-flex gap-2">
             {isAuthenticated ? <UserMenu /> : <AuthButtons />}
           </div>
-
           <button
             className="d-md-none text-white p-0 bg-transparent border-0"
             onClick={() => setShowMobileMenu(true)}
@@ -41,7 +38,6 @@ const Navbar: React.FC = () => {
           </button>
         </div>
       </Container>
-
       <MobileMenu
         show={showMobileMenu}
         onHide={() => setShowMobileMenu(false)}

@@ -5,14 +5,11 @@ import { useFilters } from "@/context/FiltersContext";
 const GenreFilter: React.FC = () => {
   const { selectedGenre, setSelectedGenre, categories, loading } = useFilters();
 
-  if (loading) {
-    return;
-  }
+  if (loading) return null;
 
   return (
     <div className="d-flex flex-wrap gap-2">
       <Button
-        key="Sve"
         variant={selectedGenre === "Sve" ? "success" : "dark"}
         className="rounded-pill px-3 py-2"
         onClick={() => setSelectedGenre("Sve")}

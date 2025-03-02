@@ -2,7 +2,8 @@ import React from "react";
 import { Offcanvas } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import AuthButtons from "./AuthButtons";
-import useLogout from "@/hooks/useLogout"; // Import the custom hook
+import { useAuth } from "@/context/AuthContext";
+import { toast } from "react-toastify";
 
 interface MobileMenuProps {
   show: boolean;
@@ -15,7 +16,17 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
   onHide,
   isLoggedIn,
 }) => {
-  const handleLogout = useLogout();
+  const { logout } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      toast.success("Uspešno ste se odjavili!");
+      onHide();
+    } catch (error: any) {
+      toast.error(error.message || "Došlo je do greške pri odjavi.");
+    }
+  };
 
   return (
     <Offcanvas
@@ -49,10 +60,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
               <Link
                 to="#"
                 className="text-danger text-decoration-none"
-                onClick={() => {
-                  handleLogout();
-                  onHide();
-                }}
+                onClick={handleLogout}
               >
                 Odjavi se
               </Link>

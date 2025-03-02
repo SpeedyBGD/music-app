@@ -1,15 +1,26 @@
 import React, { useState } from "react";
 import { Button, Form } from "react-bootstrap";
-import useLogin from "@/hooks/useLogin";
+import { useAuth } from "@/context/AuthContext";
+import { toast } from "react-toastify";
 
-const LoginForm: React.FC = () => {
+interface LoginFormProps {
+  onClose: () => void;
+}
+
+const LoginForm: React.FC<LoginFormProps> = ({ onClose }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const handleLogin = useLogin();
+  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await handleLogin(email, password);
+    try {
+      await login(email, password);
+      toast.success("Uspešno ste se prijavili!");
+      onClose();
+    } catch (error: any) {
+      toast.error(error.message || "Došlo je do greške pri prijavi.");
+    }
   };
 
   return (
@@ -24,7 +35,6 @@ const LoginForm: React.FC = () => {
           className="rounded-pill"
         />
       </Form.Group>
-
       <Form.Group className="mb-3" controlId="formBasicPassword">
         <Form.Label>Lozinka</Form.Label>
         <Form.Control
@@ -35,7 +45,6 @@ const LoginForm: React.FC = () => {
           className="rounded-pill"
         />
       </Form.Group>
-
       <Button
         variant="primary"
         type="submit"

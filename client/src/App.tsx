@@ -1,32 +1,26 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import MainLayout from "@/layout/MainLayout";
-import HomePage from "@/pages/HomePage";
-import LikedSongsPage from "@/pages/LikedSongsPage";
-import { FiltersProvider } from "@/context/FiltersContext";
+import { BrowserRouter as Router } from "react-router-dom";
 import { AuthProvider } from "@/context/AuthContext";
+import { FiltersProvider } from "@/context/FiltersContext";
+import { PlayerProvider } from "@/context/PlayerContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import MainLayout from "@/layout/MainLayout";
+import AppRoutes from "@/routes/AppRoutes";
 
-const App: React.FC = () => {
-  return (
-    <Router>
-      <AuthProvider>
-        <FiltersProvider>
+const App: React.FC = () => (
+  <Router>
+    <AuthProvider>
+      <FiltersProvider>
+        <PlayerProvider>
           <MainLayout>
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route
-                path="/moje-lajkovane-pesme"
-                element={<LikedSongsPage />}
-              />
-            </Routes>
+            <AppRoutes />
           </MainLayout>
-        </FiltersProvider>
-        <ToastContainer />
-      </AuthProvider>
-    </Router>
-  );
-};
+          <ToastContainer />
+        </PlayerProvider>
+      </FiltersProvider>
+    </AuthProvider>
+  </Router>
+);
 
 export default App;

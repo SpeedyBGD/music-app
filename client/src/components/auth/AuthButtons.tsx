@@ -23,22 +23,20 @@ const AuthButtons: React.FC = () => {
       >
         Registruj se
       </Button>
-
       <Modal show={showLogin} onHide={() => setShowLogin(false)} centered>
         <Modal.Header closeButton closeVariant="white">
           <Modal.Title>Login</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <LoginForm />
+          <LoginForm onClose={() => setShowLogin(false)} />
         </Modal.Body>
       </Modal>
-
       <Modal show={showRegister} onHide={() => setShowRegister(false)} centered>
         <Modal.Header closeButton closeVariant="white">
           <Modal.Title>Registracija</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <RegisterForm />
+          <RegisterForm onClose={() => setShowRegister(false)} />
         </Modal.Body>
       </Modal>
     </>

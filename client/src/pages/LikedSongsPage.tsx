@@ -1,33 +1,24 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useFilters } from "@/context/FiltersContext";
+import { usePlayer } from "@/context/PlayerContext";
+import { useAuth } from "@/context/AuthContext";
 import SongCollection from "@/components/songs/SongCollection";
-import { useSongManager } from "@/hooks/useSongManager";
+import { fetchLikedSongs } from "@/services/musicService";
 
 const LikedSongsPage: React.FC = () => {
   const { selectedGenre, sortBy } = useFilters();
-  const {
-    currentSongs,
-    isPlayerOpen,
-    currentSong,
-    handlePlaySong,
-    handleClosePlayer,
-    playNextSong,
-  } = useSongManager({
-    initialSongs: [],
-    selectedGenre,
-    sortBy,
-    isLikedSongs: true,
-  });
+  const { setSongs } = usePlayer();
+  const { isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    fetchLikedSongs(sortBy, selectedGenre === "Sve" ? undefined : selectedGenre)
+      .then(setSongs)
+      .catch((error) => console.error("Error fetching liked songs:", error));
+  }, [selectedGenre, sortBy, setSongs, isAuthenticated]);
 
   return (
     <SongCollection
       title="Moje Omiljene Pesme"
-      songs={currentSongs}
-      isPlayerOpen={isPlayerOpen}
-      currentSong={currentSong}
-      onPlaySong={handlePlaySong}
-      onClosePlayer={handleClosePlayer}
-      onNextSong={playNextSong}
       titleClassName="text-secondary"
     />
   );

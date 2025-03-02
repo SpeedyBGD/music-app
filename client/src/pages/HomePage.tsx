@@ -1,33 +1,22 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useFilters } from "@/context/FiltersContext";
+import { usePlayer } from "@/context/PlayerContext";
+import { useAuth } from "@/context/AuthContext";
 import SongCollection from "@/components/songs/SongCollection";
-import { useSongManager } from "@/hooks/useSongManager";
+import { fetchAllSongs } from "@/services/musicService";
 
 const HomePage: React.FC = () => {
   const { selectedGenre, sortBy } = useFilters();
-  const {
-    currentSongs,
-    isPlayerOpen,
-    currentSong,
-    handlePlaySong,
-    handleClosePlayer,
-    playNextSong,
-  } = useSongManager({
-    initialSongs: [],
-    selectedGenre,
-    sortBy,
-  });
+  const { setSongs } = usePlayer();
+  const { isAuthenticated } = useAuth();
 
-  return (
-    <SongCollection
-      songs={currentSongs}
-      isPlayerOpen={isPlayerOpen}
-      currentSong={currentSong}
-      onPlaySong={handlePlaySong}
-      onClosePlayer={handleClosePlayer}
-      onNextSong={playNextSong}
-    />
-  );
+  useEffect(() => {
+    fetchAllSongs(sortBy, selectedGenre === "Sve" ? undefined : selectedGenre)
+      .then(setSongs)
+      .catch((error) => console.error("Error fetching songs:", error));
+  }, [selectedGenre, sortBy, setSongs, isAuthenticated]);
+
+  return <SongCollection />;
 };
 
 export default HomePage;

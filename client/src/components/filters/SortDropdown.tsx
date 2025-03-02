@@ -13,14 +13,9 @@ const SortDropdown: React.FC = () => {
     >
       <span className="text-white">Sortiraj po:</span>
       <Dropdown>
-        <Dropdown.Toggle
-          variant="outline-light"
-          id="dropdown-basic"
-          className="rounded-pill"
-        >
+        <Dropdown.Toggle variant="outline-light" className="rounded-pill">
           {sortBy === "newest" ? "Najnovije" : "Popularnost"}
         </Dropdown.Toggle>
-
         <Dropdown.Menu className="bg-dark dropdown-menu-dark">
           <Dropdown.Item
             className="text-white"

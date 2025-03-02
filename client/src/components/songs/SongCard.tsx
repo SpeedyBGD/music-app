@@ -3,14 +3,15 @@ import { Song } from "@/types/music";
 import HeartIcon from "@/components/icons/HeartIcon";
 import PlayIcon from "@/components/icons/PlayIcon";
 import { useFilters } from "@/context/FiltersContext";
+import { usePlayer } from "@/context/PlayerContext";
 
 interface SongCardProps {
   song: Song;
-  onPlay: (song: Song) => void;
 }
 
-const SongCard: React.FC<SongCardProps> = ({ song, onPlay }) => {
+const SongCard: React.FC<SongCardProps> = ({ song }) => {
   const { categories } = useFilters();
+  const { playSong } = usePlayer();
   const thumbnailUrl = `${import.meta.env.VITE_YOUTUBE_THUMBNAIL_URL}${song.youtubeId}/hqdefault.jpg`;
   const categoryName =
     categories.find((cat) => cat.id === song.kategorijaId)?.naziv || "Sve";
@@ -18,7 +19,7 @@ const SongCard: React.FC<SongCardProps> = ({ song, onPlay }) => {
   return (
     <div
       className="song-card bg-secondary rounded-3 p-3 d-flex flex-column h-100 position-relative"
-      onClick={() => onPlay(song)}
+      onClick={() => playSong(song)}
     >
       <div className="position-relative mb-3">
         <img
@@ -39,7 +40,10 @@ const SongCard: React.FC<SongCardProps> = ({ song, onPlay }) => {
         <div className="d-flex justify-content-between align-items-center">
           <span className="badge text-muted">{categoryName}</span>
           <div className="d-flex align-items-center gap-2 text-muted">
-            <HeartIcon size={16} color="gray" />
+            <HeartIcon
+              size={16}
+              color={song.lajkovaoKorisnik === 1 ? "red" : "gray"}
+            />
             <span className="small">{song.brojLajkova}</span>
           </div>
         </div>

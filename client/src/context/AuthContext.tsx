@@ -1,11 +1,17 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import axiosInstance from "@/services/axiosInterceptor";
 import { setupAxiosInterceptor } from "@/services/axiosInterceptor";
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  login: (token: string) => void;
-  logout: () => void;
   token: string | null;
+  login: (email: string, password: string) => Promise<void>;
+  register: (
+    email: string,
+    password: string,
+    confirmPassword: string,
+  ) => Promise<void>;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -18,24 +24,62 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   );
   const isAuthenticated = !!token;
 
-  const login = (token: string) => {
-    localStorage.setItem("token", token);
-    setToken(token);
+  const login = async (email: string, password: string) => {
+    try {
+      const response = await axiosInstance.post("/auth/login", {
+        email,
+        password,
+      });
+      localStorage.setItem("token", response.data.token);
+      setToken(response.data.token);
+    } catch (error: any) {
+      throw new Error(
+        error.response?.data?.message || "Pogrešan email ili lozinka",
+      );
+    }
   };
 
-  const logout = () => {
+  const register = async (
+    email: string,
+    password: string,
+    confirmPassword: string,
+  ) => {
+    try {
+      const response = await axiosInstance.post("/auth/register", {
+        email,
+        password,
+        confirmPassword,
+      });
+      localStorage.setItem("token", response.data.token);
+      setToken(response.data.token);
+    } catch (error: any) {
+      throw new Error(
+        error.response?.data?.message || "Greška pri registraciji",
+      );
+    }
+  };
+
+  const logout = async () => {
+    try {
+      await axiosInstance.post(
+        "/auth/logout",
+        {},
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
     localStorage.removeItem("token");
     setToken(null);
   };
 
   useEffect(() => {
-    // Set up the axios interceptor
     setupAxiosInterceptor(logout);
   }, []);
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated: isAuthenticated, login, logout, token }}
+      value={{ isAuthenticated, token, login, register, logout }}
     >
       {children}
     </AuthContext.Provider>
@@ -44,8 +88,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
+  if (!context) throw new Error("useAuth must be used within an AuthProvider");
   return context;
 };

@@ -1,16 +1,27 @@
 import React, { useState } from "react";
 import { Button, Form } from "react-bootstrap";
-import useRegister from "@/hooks/useRegister";
+import { useAuth } from "@/context/AuthContext";
+import { toast } from "react-toastify";
 
-const RegisterForm: React.FC = () => {
+interface RegisterFormProps {
+  onClose: () => void;
+}
+
+const RegisterForm: React.FC<RegisterFormProps> = ({ onClose }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const handleRegister = useRegister();
+  const { register } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await handleRegister(email, password, confirmPassword);
+    try {
+      await register(email, password, confirmPassword);
+      toast.success("Uspešno ste se registrovali!");
+      onClose();
+    } catch (error: any) {
+      toast.error(error.message || "Došlo je do greške pri registraciji.");
+    }
   };
 
   return (
@@ -25,7 +36,6 @@ const RegisterForm: React.FC = () => {
           className="rounded-pill"
         />
       </Form.Group>
-
       <Form.Group className="mb-3" controlId="formBasicPassword">
         <Form.Label>Lozinka</Form.Label>
         <Form.Control
@@ -36,7 +46,6 @@ const RegisterForm: React.FC = () => {
           className="rounded-pill"
         />
       </Form.Group>
-
       <Form.Group className="mb-3" controlId="formBasicConfirmPassword">
         <Form.Label>Potvrdite lozinku</Form.Label>
         <Form.Control
@@ -47,7 +56,6 @@ const RegisterForm: React.FC = () => {
           className="rounded-pill"
         />
       </Form.Group>
-
       <Button
         variant="primary"
         type="submit"
