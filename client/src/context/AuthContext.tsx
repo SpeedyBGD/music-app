@@ -5,6 +5,7 @@ import { setupAxiosInterceptor } from "@/services/axiosInterceptor";
 interface AuthContextType {
   isAuthenticated: boolean;
   token: string | null;
+  email: string | null;
   login: (email: string, password: string) => Promise<void>;
   register: (
     email: string,
@@ -22,6 +23,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [token, setToken] = useState<string | null>(
     localStorage.getItem("token"),
   );
+  const [email, setEmail] = useState<string | null>(
+    localStorage.getItem("email"),
+  );
   const isAuthenticated = !!token;
 
   const login = async (email: string, password: string) => {
@@ -31,7 +35,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         password,
       });
       localStorage.setItem("token", response.data.token);
+      localStorage.setItem("email", email);
       setToken(response.data.token);
+      setEmail(email);
     } catch (error: any) {
       throw new Error(
         error.response?.data?.message || "Pogrešan email ili lozinka",
@@ -51,7 +57,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         confirmPassword,
       });
       localStorage.setItem("token", response.data.token);
+      localStorage.setItem("email", email);
       setToken(response.data.token);
+      setEmail(email);
     } catch (error: any) {
       throw new Error(
         error.response?.data?.message || "Greška pri registraciji",
@@ -70,7 +78,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       console.error("Logout failed:", error);
     }
     localStorage.removeItem("token");
+    localStorage.removeItem("email");
     setToken(null);
+    setEmail(null);
   };
 
   useEffect(() => {
@@ -79,7 +89,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, token, login, register, logout }}
+      value={{ isAuthenticated, token, email, login, register, logout }}
     >
       {children}
     </AuthContext.Provider>

@@ -4,6 +4,7 @@ import HeartIcon from "@/components/icons/HeartIcon";
 import PlayIcon from "@/components/icons/PlayIcon";
 import { useFilters } from "@/context/FiltersContext";
 import { usePlayer } from "@/context/PlayerContext";
+import { YOUTUBE_THUMBNAIL_URL } from "@/utils/constants";
 
 interface SongCardProps {
   song: Song;
@@ -12,7 +13,7 @@ interface SongCardProps {
 const SongCard: React.FC<SongCardProps> = ({ song }) => {
   const { categories } = useFilters();
   const { playSong } = usePlayer();
-  const thumbnailUrl = `${import.meta.env.VITE_YOUTUBE_THUMBNAIL_URL}${song.youtubeId}/hqdefault.jpg`;
+  const thumbnailUrl = `${YOUTUBE_THUMBNAIL_URL}${song.youtubeId}/hqdefault.jpg`;
   const categoryName =
     categories.find((cat) => cat.id === song.kategorijaId)?.naziv || "Sve";
 

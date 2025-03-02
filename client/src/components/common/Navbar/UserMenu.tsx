@@ -6,7 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 import { toast } from "react-toastify";
 
 const UserMenu: React.FC = () => {
-  const { logout } = useAuth();
+  const { logout, email } = useAuth();
 
   const handleLogout = async () => {
     try {
@@ -19,8 +19,12 @@ const UserMenu: React.FC = () => {
 
   return (
     <Dropdown>
-      <Dropdown.Toggle variant="link" className="text-white p-0">
+      <Dropdown.Toggle
+        variant="link"
+        className="text-white p-0 d-flex align-items-center gap-2"
+      >
         <UserIcon size={24} />
+        {email && <span className="small">{email}</span>}
       </Dropdown.Toggle>
       <Dropdown.Menu className="bg-dark dropdown-menu-dark">
         <Dropdown.Item

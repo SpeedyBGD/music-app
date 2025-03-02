@@ -48,23 +48,22 @@ const PlayerOverlay: React.FC = () => {
             <h3 className="h5 mb-1">{currentSong.naziv}</h3>
             <p className="text-muted mb-0">{currentSong.umetnik}</p>
           </div>
-          {isAuthenticated && (
-            <div className="d-flex align-items-center gap-3">
-              <button
-                className="bg-transparent border-0 p-0"
-                onClick={playNext}
-              >
-                <NextSongIcon size={24} color="white" />
-              </button>
-              <button
-                className="bg-transparent border-0 p-0"
-                onClick={() => toggleLike(currentSong.id)}
-              >
-                <HeartIcon size={24} color={isLiked ? "red" : "white"} />
-              </button>
-              <span className="text-white">{currentSong.brojLajkova}</span>
-            </div>
-          )}
+          <div className="d-flex align-items-center gap-3">
+            <button className="bg-transparent border-0 p-0" onClick={playNext}>
+              <NextSongIcon size={24} color="white" />
+            </button>
+            {isAuthenticated && (
+              <>
+                <button
+                  className="bg-transparent border-0 p-0"
+                  onClick={() => toggleLike(currentSong.id)}
+                >
+                  <HeartIcon size={24} color={isLiked ? "red" : "white"} />
+                </button>
+                <span className="text-white">{currentSong.brojLajkova}</span>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </Modal>
