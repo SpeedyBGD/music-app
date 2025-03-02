@@ -1,13 +1,13 @@
 import dotenv from 'dotenv';
-import express from 'express';
+import express, { Express } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-
 import musicRoutes from './routes/musicRoutes';
 import authRoutes from './routes/authRoutes';
 
 dotenv.config();
-const app = express();
+
+const app: Express = express();
 
 app.use(cors());
 app.use(helmet());

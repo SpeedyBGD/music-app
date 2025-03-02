@@ -10,14 +10,14 @@ export const authenticate = (
   res: Response,
   next: NextFunction
 ) => {
+  const token = req.headers['authorization']?.split(' ')[1];
+
+  if (!token) {
+    res.locals.user = null;
+    return next();
+  }
+
   try {
-    const token = req.headers['authorization']?.split(' ')[1];
-
-    if (!token) {
-      res.locals.user = null;
-      return next();
-    }
-
     const JWT_SECRET = getJwtSecret();
 
     if (checkTokenBlacklist(token)) {
@@ -25,23 +25,21 @@ export const authenticate = (
     }
 
     const decoded = jwt.verify(token, JWT_SECRET) as User;
-    res.locals.user = decoded;
 
     const user = db
       .prepare('SELECT * FROM korisnici WHERE id = ?')
-      .get(decoded.id);
+      .get(decoded.id) as User | undefined;
 
     if (!user) {
       return res.status(401).json({ message: 'Korisnik više ne postoji' });
     }
 
+    res.locals.user = decoded;
     next();
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      return res
-        .status(401)
-        .json({ message: 'Nevalidan ili istekao token', error: error.message });
-    }
-    return res.status(401).json({ message: 'Nepoznata greška' });
+  } catch (error) {
+    return res.status(401).json({
+      message: 'Nevalidan ili istekao token',
+      error: error instanceof Error ? error.message : 'Nepoznata greška',
+    });
   }
 };

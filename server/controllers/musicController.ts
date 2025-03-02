@@ -9,8 +9,12 @@ import {
 import { SongFilters } from '@server/models/Song';
 
 export const likeSong = (req: Request, res: Response) => {
-  const userId = res.locals.user.id;
+  const userId = res.locals.user?.id;
   const { songId } = req.body;
+
+  if (!userId) {
+    return res.status(401).json({ message: 'Neautorizovan pristup' });
+  }
 
   if (!songId) {
     return res.status(400).json({ message: 'ID pesme je obavezan' });
@@ -39,9 +43,12 @@ export const getFilteredSongs = (req: Request, res: Response) => {
   const userId = res.locals.user?.id;
   const filters: SongFilters = {
     kategorijaId: req.query.kategorijaId
-      ? parseInt(req.query.kategorijaId as string)
+      ? Number(req.query.kategorijaId)
       : undefined,
-    redosled: req.query.redosled === 'lajkovi' ? 'lajkovi' : undefined,
+    redosled:
+      req.query.redosled === 'lajkovi' || req.query.redosled === 'datum'
+        ? req.query.redosled
+        : undefined,
   };
 
   const result = getSongsByFilters(filters, userId);
@@ -54,9 +61,23 @@ export const getFilteredSongs = (req: Request, res: Response) => {
 };
 
 export const getLikedSongs = (req: Request, res: Response) => {
-  const userId = res.locals.user.id;
+  const userId = res.locals.user?.id;
 
-  const result = getLikedSongsByFilter(userId);
+  if (!userId) {
+    return res.status(401).json({ message: 'Neautorizovan pristup' });
+  }
+
+  const filters: SongFilters = {
+    kategorijaId: req.query.kategorijaId
+      ? Number(req.query.kategorijaId)
+      : undefined,
+    redosled:
+      req.query.redosled === 'lajkovi' || req.query.redosled === 'datum'
+        ? req.query.redosled
+        : undefined,
+  };
+
+  const result = getLikedSongsByFilter(userId, filters);
 
   if (result.error) {
     return res.status(result.status!).json({ message: result.message });
@@ -66,8 +87,12 @@ export const getLikedSongs = (req: Request, res: Response) => {
 };
 
 export const unlikeSong = (req: Request, res: Response) => {
-  const userId = res.locals.user.id;
+  const userId = res.locals.user?.id;
   const { songId } = req.body;
+
+  if (!userId) {
+    return res.status(401).json({ message: 'Neautorizovan pristup' });
+  }
 
   if (!songId) {
     return res.status(400).json({ message: 'ID pesme je obavezan' });
