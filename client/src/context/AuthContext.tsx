@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import axios from "axios";
+import { setupAxiosInterceptor } from "@/services/axiosInterceptor";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -29,10 +29,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    if (storedToken) {
-      setToken(storedToken);
-    }
+    // Set up the axios interceptor
+    setupAxiosInterceptor(logout);
   }, []);
 
   return (

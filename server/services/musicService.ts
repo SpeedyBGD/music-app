@@ -127,7 +127,7 @@ const buildSongQuery = (
              FROM lajkovanje 
              WHERE lajkovanje.korisnikId = ? 
                AND lajkovanje.pesmaId = pesme.id
-           ) AS liked_by_user
+           ) AS lajkovaoKorisnik
     FROM pesme
     LEFT JOIN lajkovanje ON pesme.id = lajkovanje.pesmaId
   `;
@@ -161,7 +161,7 @@ const buildLikedSongsQuery = (
   let query = `
     SELECT pesme.*, 
            IFNULL(COUNT(lajkovanje.pesmaId), 0) AS brojLajkova,
-           TRUE AS liked_by_user
+           TRUE AS lajkovaoKorisnik
     FROM pesme
     INNER JOIN lajkovanje ON pesme.id = lajkovanje.pesmaId
     WHERE lajkovanje.korisnikId = ?

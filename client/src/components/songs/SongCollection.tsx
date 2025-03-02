@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Row, Col } from "react-bootstrap";
 import { Song } from "@/types/music";
 import GenreFilter from "@/components/filters/GenreFilter";
@@ -27,6 +27,35 @@ const SongCollection: React.FC<SongCollectionProps> = ({
   onNextSong,
   titleClassName = "",
 }) => {
+  const [currentSongs, setCurrentSongs] = useState<Song[]>(songs);
+
+  // Sync currentSongs with the songs prop
+  useEffect(() => {
+    setCurrentSongs(songs);
+  }, [songs]);
+
+  const handleLikeUpdate = (
+    songId: string,
+    newLikeCount: number,
+    isLiked: boolean,
+  ) => {
+    setCurrentSongs((prevSongs) =>
+      prevSongs.map((song) =>
+        song.id === songId
+          ? {
+              ...song,
+              brojLajkova: newLikeCount,
+              lajkovaoKorisnik: isLiked ? 1 : 0,
+            }
+          : song,
+      ),
+    );
+  };
+
+  // Find the updated currentSong from currentSongs
+  const updatedCurrentSong =
+    currentSong && currentSongs.find((song) => song.id === currentSong.id);
+
   return (
     <div className="container mt-4">
       <h2 className={`mb-5 ${titleClassName} text-center`}>{title}</h2>
@@ -39,9 +68,9 @@ const SongCollection: React.FC<SongCollectionProps> = ({
         </Col>
       </Row>
 
-      <SongGrid songs={songs} onPlay={onPlaySong} />
+      <SongGrid songs={currentSongs} onPlay={onPlaySong} />
 
-      {songs.length === 0 && (
+      {currentSongs.length === 0 && (
         <div className="text-center text-muted py-5">
           <h4>Nema pronađenih pesama</h4>
           <p>Pokušajte da promenite filtere</p>
@@ -49,10 +78,11 @@ const SongCollection: React.FC<SongCollectionProps> = ({
       )}
 
       <PlayerOverlay
-        song={currentSong}
+        song={updatedCurrentSong || currentSong}
         isOpen={isPlayerOpen}
         onClose={onClosePlayer}
         onNextSong={onNextSong}
+        onLikeUpdate={handleLikeUpdate}
       />
     </div>
   );

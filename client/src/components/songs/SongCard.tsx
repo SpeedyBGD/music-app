@@ -40,7 +40,7 @@ const SongCard: React.FC<SongCardProps> = ({ song, onPlay }) => {
           <span className="badge text-muted">{categoryName}</span>
           <div className="d-flex align-items-center gap-2 text-muted">
             <HeartIcon size={16} color="gray" />
-            <span className="small">{song.lajkova}</span>
+            <span className="small">{song.brojLajkova}</span>
           </div>
         </div>
       </div>

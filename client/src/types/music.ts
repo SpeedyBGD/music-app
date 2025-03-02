@@ -3,9 +3,9 @@ export interface Song {
   naziv: string;
   umetnik: string;
   kategorijaId: number;
-  lajkova: number;
+  brojLajkova: number;
   youtubeId: string;
-  likedByUser: number;
+  lajkovaoKorisnik: number;
 }
 
 export interface Category {

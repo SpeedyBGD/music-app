@@ -7,11 +7,15 @@ export const fetchAllSongs = async (
   categoryId?: number,
 ): Promise<Song[]> => {
   try {
+    const token = localStorage.getItem("token");
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
     const response = await axios.get(`${API_BASE_URL}/music`, {
       params: {
         redosled: sortBy === "popularity" ? "lajkovi" : "datum",
         kategorijaId: categoryId,
       },
+      headers,
     });
     return response.data;
   } catch (error) {
@@ -69,7 +73,7 @@ export const unlikeSong = async (
   try {
     await axios.post(
       `${API_BASE_URL}/music/unlike`,
-      { song_id: songId },
+      { songId: songId },
       {
         headers: {
           Authorization: `Bearer ${token}`,

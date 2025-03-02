@@ -1,9 +1,8 @@
-import axios from "axios";
-import { API_BASE_URL } from "@/utils/constants";
+import axiosInstance from "./axiosInterceptor";
 
 export const login = async (email: string, password: string) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/auth/login`, {
+    const response = await axiosInstance.post("/auth/login", {
       email,
       password,
     });
@@ -20,7 +19,7 @@ export const register = async (
   confirmPassword: string,
 ) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/auth/register`, {
+    const response = await axiosInstance.post("/auth/register", {
       email,
       password,
       confirmPassword,
@@ -35,8 +34,8 @@ export const register = async (
 export const logout = async () => {
   try {
     const token = localStorage.getItem("token");
-    const response = await axios.post(
-      `${API_BASE_URL}/auth/logout`,
+    const response = await axiosInstance.post(
+      "/auth/logout",
       {},
       {
         headers: {

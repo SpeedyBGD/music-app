@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import YouTube from "react-youtube";
 import { toast } from "react-toastify";
 import HeartIcon from "@/components/icons/HeartIcon";
@@ -13,6 +13,11 @@ interface PlayerOverlayProps {
   isOpen: boolean;
   onClose: () => void;
   onNextSong: () => void;
+  onLikeUpdate: (
+    songId: string,
+    newLikeCount: number,
+    isLiked: boolean,
+  ) => void;
 }
 
 const PlayerOverlay: React.FC<PlayerOverlayProps> = ({
@@ -20,29 +25,30 @@ const PlayerOverlay: React.FC<PlayerOverlayProps> = ({
   isOpen,
   onClose,
   onNextSong,
+  onLikeUpdate,
 }) => {
-  const [isLiked, setIsLiked] = useState(false);
   const { isAuthenticated, token } = useAuth();
 
-  useEffect(() => {
-    if (song) {
-      setIsLiked(song.likedByUser === 1);
-    }
-  }, [song]);
+  if (!song) return null;
+
+  // Determine if the song is liked by the current user
+  const isLiked = song.lajkovaoKorisnik === 1;
 
   const handleLikeClick = async () => {
-    if (!isAuthenticated || !song || !token) return;
+    if (!isAuthenticated || !token) return;
 
     try {
       if (isLiked) {
+        // Unlike the song
         await unlikeSong(song.id, token);
+        onLikeUpdate(song.id, song.brojLajkova - 1, false); // Update parent state
+        toast.success("Uklonili ste lajk sa pesme");
       } else {
+        // Like the song
         await likeSong(song.id, token);
+        onLikeUpdate(song.id, song.brojLajkova + 1, true); // Update parent state
+        toast.success("Lajkovali ste pesmu");
       }
-      setIsLiked(!isLiked);
-      toast.success(
-        isLiked ? "Uklonili ste lajk sa pesme" : "Lajkovali ste pesmu",
-      );
     } catch (error) {
       console.error("Error toggling like:", error);
       toast.error("Došlo je do greške prilikom lajkovanja pesme.");
@@ -54,8 +60,6 @@ const PlayerOverlay: React.FC<PlayerOverlayProps> = ({
       onNextSong();
     }
   };
-
-  if (!song) return null;
 
   const opts = {
     height: "100%",
@@ -85,25 +89,34 @@ const PlayerOverlay: React.FC<PlayerOverlayProps> = ({
           />
         </div>
 
-        {isAuthenticated && (
-          <div className="d-flex justify-content-end align-items-center gap-3 mt-3">
-            <button
-              className="bg-transparent border-0 p-0"
-              onClick={onNextSong}
-              aria-label="Sledeća pesma"
-            >
-              <NextSongIcon size={24} color="white" />
-            </button>
-
-            <button
-              className="bg-transparent border-0 p-0"
-              onClick={handleLikeClick}
-              aria-label="Like"
-            >
-              <HeartIcon size={24} color={isLiked ? "red" : "white"} />
-            </button>
+        <div className="d-flex justify-content-between align-items-center mt-3">
+          <div>
+            <h3 className="h5 mb-1">{song.naziv}</h3>
+            <p className="text-muted mb-0">{song.umetnik}</p>
           </div>
-        )}
+
+          {isAuthenticated && (
+            <div className="d-flex align-items-center gap-3">
+              <button
+                className="bg-transparent border-0 p-0"
+                onClick={onNextSong}
+                aria-label="Sledeća pesma"
+              >
+                <NextSongIcon size={24} color="white" />
+              </button>
+
+              <button
+                className="bg-transparent border-0 p-0"
+                onClick={handleLikeClick}
+                aria-label="Like"
+              >
+                <HeartIcon size={24} color={isLiked ? "red" : "white"} />
+              </button>
+
+              <span className="text-white">{song.brojLajkova}</span>
+            </div>
+          )}
+        </div>
       </div>
     </Modal>
   );
