@@ -41,7 +41,7 @@ export const registerService = async (
     .get(email) as User | undefined;
 
   if (existingUser) {
-    return { status: 400, message: 'Ovaj email već postoji' };
+    return { error: true, status: 400, message: 'Ovaj email već postoji' };
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
