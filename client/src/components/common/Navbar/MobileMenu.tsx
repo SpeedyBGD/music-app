@@ -1,23 +1,34 @@
 import React from "react";
-import { Offcanvas } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Offcanvas, Form, Button } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
 import AuthButtons from "./AuthButtons";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "react-toastify";
 import UserIcon from "@/components/icons/UserIcon";
+import SearchIcon from "@/components/icons/SearchIcon";
+import { useFilters } from "@/context/FiltersContext";
+import { usePlayer } from "@/context/PlayerContext";
+import { searchSongs } from "@/services/musicService";
 
 interface MobileMenuProps {
   show: boolean;
   onHide: () => void;
   isLoggedIn: boolean;
+  query: string;
+  setQuery: (query: string) => void;
 }
 
 const MobileMenu: React.FC<MobileMenuProps> = ({
   show,
   onHide,
   isLoggedIn,
+  query,
+  setQuery,
 }) => {
   const { logout, email } = useAuth();
+  const navigate = useNavigate();
+  const { setSelectedGenre, setSortBy } = useFilters();
+  const { setSongs } = usePlayer();
 
   const handleLogout = async () => {
     try {
@@ -27,6 +38,17 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
     } catch (error: any) {
       toast.error(error.message || "Došlo je do greške pri odjavi.");
     }
+  };
+
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!query.trim()) return;
+    setSelectedGenre("Sve");
+    setSortBy("newest");
+    const songs = await searchSongs(query);
+    setSongs(songs);
+    navigate("/");
+    onHide();
   };
 
   return (
@@ -45,6 +67,21 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
       </Offcanvas.Header>
       <Offcanvas.Body>
         <div className="d-flex flex-column gap-3">
+          <Form
+            onSubmit={handleSearch}
+            className="d-flex align-items-center gap-2"
+          >
+            <Form.Control
+              type="text"
+              placeholder="Pretražite muziku..."
+              className="rounded-pill"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
+            <Button variant="link" className="text-white" type="submit">
+              <SearchIcon size={20} />
+            </Button>
+          </Form>
           {isLoggedIn && email && (
             <div className="text-center mb-3">
               <div className="d-flex justify-content-center align-items-center gap-2">

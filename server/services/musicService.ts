@@ -93,6 +93,86 @@ export const unlikeSongService = (
   return { error: false };
 };
 
+export const searchSongs = (
+  searchQuery: string,
+  userId?: number
+): ServiceResponse<SongWithLikes[]> => {
+  const searchTerm = `%${searchQuery}%`;
+  const query = `
+    SELECT pesme.*, 
+           IFNULL(COUNT(lajkovanje.pesmaId), 0) AS brojLajkova,
+           EXISTS (
+             SELECT 1 
+             FROM lajkovanje 
+             WHERE lajkovanje.korisnikId = ? 
+               AND lajkovanje.pesmaId = pesme.id
+           ) AS lajkovaoKorisnik
+    FROM pesme
+    LEFT JOIN lajkovanje ON pesme.id = lajkovanje.pesmaId
+    LEFT JOIN kategorije ON pesme.kategorijaId = kategorije.id
+    WHERE pesme.naziv LIKE ?
+       OR pesme.umetnik LIKE ?
+       OR kategorije.naziv LIKE ?
+    GROUP BY pesme.id
+    ORDER BY 
+      CASE 
+        WHEN pesme.naziv LIKE ? THEN 3
+        WHEN pesme.umetnik LIKE ? THEN 2
+        WHEN kategorije.naziv LIKE ? THEN 1
+        ELSE 0
+      END DESC, 
+      brojLajkova DESC
+  `;
+  const params = [
+    userId ?? null,
+    searchTerm,
+    searchTerm,
+    searchTerm,
+    searchTerm,
+    searchTerm,
+    searchTerm,
+  ];
+  const songs = db.prepare(query).all(...params) as SongWithLikes[];
+  return { data: songs };
+};
+
+export const addSongService = (songData: {
+  naziv: string;
+  umetnik: string;
+  youtubeId: string;
+  kategorijaId: number;
+}): ServiceResponse<number> => {
+  const { naziv, umetnik, youtubeId, kategorijaId } = songData;
+
+  const categoryExists = db
+    .prepare('SELECT id FROM kategorije WHERE id = ?')
+    .get(kategorijaId);
+
+  if (!categoryExists) {
+    return { error: true, status: 400, message: 'Kategorija ne postoji' };
+  }
+
+  const existingSong = db
+    .prepare('SELECT id FROM pesme WHERE youtubeId = ?')
+    .get(youtubeId);
+
+  if (existingSong) {
+    return {
+      error: true,
+      status: 400,
+      message: 'Pesma sa ovim YouTube ID već postoji',
+    };
+  }
+
+  const result = db
+    .prepare(
+      'INSERT INTO pesme (naziv, umetnik, youtubeId, kategorijaId) VALUES (?, ?, ?, ?)'
+    )
+    .run(naziv, umetnik, youtubeId, kategorijaId);
+
+  return { data: result.lastInsertRowid as number };
+};
+
 const buildSongQuery = (
   filters: SongFilters = {},
   userId?: number

@@ -5,7 +5,11 @@ import UserIcon from "@/components/icons/UserIcon";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "react-toastify";
 
-const UserMenu: React.FC = () => {
+interface UserMenuProps {
+  onAddSongClick: () => void;
+}
+
+const UserMenu: React.FC<UserMenuProps> = ({ onAddSongClick }) => {
   const { logout, email } = useAuth();
 
   const handleLogout = async () => {
@@ -34,7 +38,11 @@ const UserMenu: React.FC = () => {
         >
           Omiljene pesme
         </Dropdown.Item>
-        <Dropdown.Item as={Link} to="#" className="text-white">
+        <Dropdown.Item
+          as="button"
+          className="text-white"
+          onClick={onAddSongClick}
+        >
           Dodaj pesmu
         </Dropdown.Item>
         <Dropdown.Divider />

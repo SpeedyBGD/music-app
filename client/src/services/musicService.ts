@@ -1,4 +1,3 @@
-// src/services/musicService.ts
 import axiosInstance from "./axiosInterceptor";
 import { API_BASE_URL } from "@/utils/constants";
 
@@ -47,3 +46,26 @@ export const unlikeSong = (songId: string, token: string) =>
     { songId },
     { headers: { Authorization: `Bearer ${token}` } },
   );
+
+export const searchSongs = (query: string) => {
+  const token = localStorage.getItem("token");
+  return axiosInstance
+    .get(`${API_BASE_URL}/music/search`, {
+      params: { query },
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
+    .then((res) => res.data);
+};
+
+export const addSong = (
+  song: {
+    naziv: string;
+    umetnik: string;
+    youtubeId: string;
+    kategorijaId: number;
+  },
+  token: string,
+) =>
+  axiosInstance.post(`${API_BASE_URL}/music/add`, song, {
+    headers: { Authorization: `Bearer ${token}` },
+  });

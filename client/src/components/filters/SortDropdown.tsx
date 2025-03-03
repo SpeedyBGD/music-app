@@ -1,9 +1,21 @@
 import React from "react";
 import { Dropdown, Stack } from "react-bootstrap";
 import { useFilters } from "@/context/FiltersContext";
+import { usePlayer } from "@/context/PlayerContext";
+import { fetchAllSongs } from "@/services/musicService";
 
 const SortDropdown: React.FC = () => {
-  const { sortBy, setSortBy } = useFilters();
+  const { sortBy, setSortBy, selectedGenre } = useFilters();
+  const { setSongs } = usePlayer();
+
+  const handleSortChange = async (newSortBy: "newest" | "popularity") => {
+    setSortBy(newSortBy);
+    const songs = await fetchAllSongs(
+      newSortBy,
+      selectedGenre === "Sve" ? undefined : selectedGenre,
+    );
+    setSongs(songs);
+  };
 
   return (
     <Stack
@@ -19,13 +31,13 @@ const SortDropdown: React.FC = () => {
         <Dropdown.Menu className="bg-dark dropdown-menu-dark">
           <Dropdown.Item
             className="text-white"
-            onClick={() => setSortBy("newest")}
+            onClick={() => handleSortChange("newest")}
           >
             Najnovije
           </Dropdown.Item>
           <Dropdown.Item
             className="text-white"
-            onClick={() => setSortBy("popularity")}
+            onClick={() => handleSortChange("popularity")}
           >
             Popularnost
           </Dropdown.Item>
