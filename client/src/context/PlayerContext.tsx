@@ -1,11 +1,6 @@
 import React, { createContext, useContext, useState } from "react";
 import { Song } from "@/types/music";
-import {
-  likeSong,
-  unlikeSong,
-  fetchAllSongs,
-  fetchLikedSongs,
-} from "@/services/musicService";
+import { likeSong, unlikeSong } from "@/services/musicService";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "react-toastify";
 
@@ -52,35 +47,41 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
   const toggleLike = async (songId: string) => {
     if (!isAuthenticated || !token) return;
 
-    const song = songs.find((s) => s.id === songId);
-    if (!song) return;
+    const songIndex = songs.findIndex((s) => s.id === songId);
+    if (songIndex === -1) return;
 
-    const isLiked = song.lajkovaoKorisnik === 1;
+    const isLiked = songs[songIndex].lajkovaoKorisnik === 1;
+    const updatedSongs = [...songs];
 
     try {
       if (isLiked) {
         await unlikeSong(songId, token);
+        updatedSongs[songIndex] = {
+          ...updatedSongs[songIndex],
+          lajkovaoKorisnik: 0,
+          brojLajkova: updatedSongs[songIndex].brojLajkova - 1,
+        };
         toast.success("Uklonili ste lajk sa pesme");
       } else {
         await likeSong(songId, token);
+        updatedSongs[songIndex] = {
+          ...updatedSongs[songIndex],
+          lajkovaoKorisnik: 1,
+          brojLajkova: updatedSongs[songIndex].brojLajkova + 1,
+        };
         toast.success("Lajkovali ste pesmu");
       }
 
-      const [allSongs, likedSongs] = await Promise.all([
-        fetchAllSongs("newest"),
-        fetchLikedSongs("newest"),
-      ]);
-
-      const isLikedSongsPage =
-        window.location.pathname === "/moje-lajkovane-pesme";
-      setSongs((isLikedSongsPage ? likedSongs : allSongs) as Song[]);
+      setSongs(updatedSongs);
 
       if (currentSong?.id === songId) {
-        const updatedSong = allSongs.find((s: Song) => s.id === songId);
-        if (updatedSong) setCurrentSong(updatedSong);
+        setCurrentSong(updatedSongs[songIndex]);
       }
-    } catch (error) {
-      toast.error("Došlo je do greške prilikom lajkovanja pesme.");
+    } catch (error: any) {
+      toast.error(
+        error.response?.data?.message ||
+          "Došlo je do greške prilikom lajkovanja pesme.",
+      );
     }
   };
 

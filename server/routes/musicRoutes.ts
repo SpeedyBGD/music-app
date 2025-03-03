@@ -9,15 +9,16 @@ import {
   addSong,
 } from '@server/controllers/musicController';
 import { authenticate } from '@server/middleware/authMiddleware';
+import { rateLimiter } from '@server/middleware/rateLimitMiddleware';
 
 const router = express.Router();
 
 router.get('/', authenticate, getFilteredSongs);
 router.get('/categories', fetchCategories);
-router.post('/like', authenticate, likeSong);
-router.post('/unlike', authenticate, unlikeSong);
+router.post('/like', rateLimiter, authenticate, likeSong);
+router.post('/unlike', rateLimiter, authenticate, unlikeSong);
 router.get('/liked', authenticate, getLikedSongs);
 router.get('/search', authenticate, searchSongsController);
-router.post('/add', authenticate, addSong);
+router.post('/add', rateLimiter, authenticate, addSong);
 
 export default router;
