@@ -18,4 +18,5 @@ export default interface Song {
   umetnik: string;
   videoUrl: string;
   kategorijaId: number;
+  uneto: string;
 }

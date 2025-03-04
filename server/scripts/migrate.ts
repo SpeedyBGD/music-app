@@ -23,6 +23,7 @@ const migrations = [
     umetnik TEXT NOT NULL,
     youtubeId TEXT NOT NULL,
     kategorijaId INTEGER,
+    uneto DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (kategorijaId) REFERENCES kategorije(id) ON DELETE SET NULL
   );
   `,
@@ -54,17 +55,17 @@ INSERT INTO kategorije (naziv) VALUES
     ('Džez');
   `,
   `
-INSERT INTO pesme (naziv, umetnik, youtubeId, kategorijaId) VALUES
-    ('Bohemian Rhapsody', 'Queen', 'fJ9rUzIMcZQ', 2),
-    ('Shape of You', 'Ed Sheeran', 'JGwWNGJdvx8', 1),
-    ('Uptown Funk', 'Mark Ronson ft. Bruno Mars', 'OPf0YbXqDm0', 1),
-    ('Humble', 'Kendrick Lamar', 'tvTRZJ-4EyI', 3),
-    ('Take Five', 'Dave Brubeck', 'vmDDOFXSgAs', 6),
-    ('Despacito', 'Luis Fonsi ft. Daddy Yankee', 'kJQP7kiw5Fk', 1),
-    ('Thunderstruck', 'AC/DC', 'v2AC41dglnM', 2),
-    ('Bad Guy', 'Billie Eilish', 'DyDfgMOUjCI', 5),
-    ('Old Town Road', 'Lil Nas X ft. Billy Ray Cyrus', '7ysFgElQtjI', 3),
-    ('Smooth Criminal', 'Michael Jackson', 'h_D3VFfhvs4', 1);
+INSERT INTO pesme (naziv, umetnik, youtubeId, kategorijaId, uneto) VALUES
+    ('Bohemian Rhapsody', 'Queen', 'fJ9rUzIMcZQ', 2, '2025-02-20 10:00:00'),
+    ('Shape of You', 'Ed Sheeran', 'JGwWNGJdvx8', 1, '2025-02-21 12:00:00'),
+    ('Uptown Funk', 'Mark Ronson ft. Bruno Mars', 'OPf0YbXqDm0', 1, '2025-02-21 14:00:00'),
+    ('Humble', 'Kendrick Lamar', 'tvTRZJ-4EyI', 3, '2025-02-22 09:00:00'),
+    ('Take Five', 'Dave Brubeck', 'vmDDOFXSgAs', 6, '2025-02-22 11:00:00'),
+    ('Despacito', 'Luis Fonsi ft. Daddy Yankee', 'kJQP7kiw5Fk', 1, '2025-02-23 15:00:00'),
+    ('Thunderstruck', 'AC/DC', 'v2AC41dglnM', 2, '2025-02-23 17:00:00'),
+    ('Bad Guy', 'Billie Eilish', 'DyDfgMOUjCI', 5, '2025-02-24 08:00:00'),
+    ('Old Town Road', 'Lil Nas X ft. Billy Ray Cyrus', '7ysFgElQtjI', 3, '2025-02-24 10:00:00'),
+    ('Smooth Criminal', 'Michael Jackson', 'h_D3VFfhvs4', 1, '2025-02-24 12:00:00');
   `,
   `
   INSERT INTO korisnici (email, lozinka) VALUES

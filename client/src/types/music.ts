@@ -6,6 +6,7 @@ export interface Song {
   brojLajkova: number;
   youtubeId: string;
   lajkovaoKorisnik: number;
+  uneto: string;
 }
 
 export interface Category {

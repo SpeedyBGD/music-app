@@ -166,7 +166,7 @@ export const addSongService = (songData: {
 
   const result = db
     .prepare(
-      'INSERT INTO pesme (naziv, umetnik, youtubeId, kategorijaId) VALUES (?, ?, ?, ?)'
+      "INSERT INTO pesme (naziv, umetnik, youtubeId, kategorijaId, uneto) VALUES (?, ?, ?, ?, DATETIME('now'))"
     )
     .run(naziv, umetnik, youtubeId, kategorijaId);
 
@@ -205,6 +205,8 @@ const buildSongQuery = (
 
   if (filters.redosled === 'lajkovi') {
     query += ' ORDER BY brojLajkova DESC';
+  } else if (filters.redosled === 'datum') {
+    query += ' ORDER BY pesme.uneto DESC';
   }
 
   return { query, params };
@@ -239,7 +241,7 @@ const buildLikedSongsQuery = (
   if (filters.redosled === 'lajkovi') {
     query += ' ORDER BY brojLajkova DESC';
   } else if (filters.redosled === 'datum') {
-    query += ' ORDER BY lajkovanje.rowid DESC';
+    query += ' ORDER BY pesme.uneto DESC';
   }
 
   return { query, params };
