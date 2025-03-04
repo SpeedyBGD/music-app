@@ -58,9 +58,18 @@ const PlayerOverlay: React.FC = () => {
                   className="bg-transparent border-0 p-0"
                   onClick={() => toggleLike(currentSong.id)}
                 >
-                  <HeartIcon size={24} color={isLiked ? "red" : "white"} />
+                  <HeartIcon
+                    size={24}
+                    color={isLiked ? "#1db954" : "white"}
+                    fill={isLiked ? "#1db954" : "none"}
+                  />
                 </button>
-                <span className="text-white">{currentSong.brojLajkova}</span>
+                <span
+                  className="text-white d-inline-block"
+                  style={{ width: "12px", textAlign: "center" }}
+                >
+                  {currentSong.brojLajkova}
+                </span>
               </>
             )}
           </div>
