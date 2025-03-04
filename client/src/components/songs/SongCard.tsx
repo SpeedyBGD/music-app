@@ -13,7 +13,7 @@ interface SongCardProps {
 const SongCard: React.FC<SongCardProps> = ({ song }) => {
   const { categories } = useFilters();
   const { playSong } = usePlayer();
-  const thumbnailUrl = `${YOUTUBE_THUMBNAIL_URL}${song.youtubeId}/mqdefault.jpg`;
+  const thumbnailUrl = `${YOUTUBE_THUMBNAIL_URL}${song.youtubeId}/hqdefault.jpg`;
   const categoryName =
     categories.find((cat) => cat.id === song.kategorijaId)?.naziv || "Sve";
 
@@ -22,13 +22,18 @@ const SongCard: React.FC<SongCardProps> = ({ song }) => {
       className="song-card bg-secondary rounded-3 p-2 d-flex flex-column h-100 position-relative"
       onClick={() => playSong(song)}
     >
-      <div className="position-relative mb-2">
+      <div className="position-relative mb-2 overflow-hidden rounded-3">
         <div className="ratio ratio-1x1">
           <img
             src={thumbnailUrl}
             alt={song.naziv}
-            className="w-100 rounded-3"
-            style={{ objectFit: "cover" }}
+            className="w-100 h-100"
+            style={{
+              objectFit: "cover",
+              transform: "scale(1.35)",
+              objectPosition: "center",
+              borderRadius: "inherit",
+            }}
             onError={(e) => {
               (e.target as HTMLImageElement).src =
                 `${YOUTUBE_THUMBNAIL_URL}${song.youtubeId}/hqdefault.jpg`;

@@ -8,9 +8,9 @@ interface SongGridProps {
 }
 
 const SongGrid: React.FC<SongGridProps> = ({ songs }) => (
-  <Row className="g-3">
+  <Row className="g-3 justify-content-start">
     {songs.map((song) => (
-      <Col key={song.id} xs={6} sm={4} md={3} lg={2} xl={2}>
+      <Col key={song.id} xs={12} sm={6} md={4} lg={3} xl={2}>
         <SongCard song={song} />
       </Col>
     ))}
