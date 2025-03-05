@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { Modal, Form, Button, Dropdown } from "react-bootstrap";
 import { useFilters } from "@/context/FiltersContext";
-import { useAuth } from "@/context/AuthContext";
 import { usePlayer } from "@/context/PlayerContext";
 import { addSong } from "@/services/musicService";
 import { toast } from "react-toastify";
 import { fetchAllSongs } from "@/services/musicService";
+import { AxiosError } from "axios";
 
 interface AddSongModalProps {
   show: boolean;
@@ -18,18 +18,19 @@ const AddSongModal: React.FC<AddSongModalProps> = ({ show, onHide }) => {
   const [youtubeId, setYoutubeId] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const { categories } = useFilters();
-  const { token } = useAuth();
   const { setSongs } = usePlayer();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!token || !selectedCategory) return;
+    if (!selectedCategory) return;
 
     try {
-      await addSong(
-        { naziv, umetnik, youtubeId, kategorijaId: selectedCategory },
-        token,
-      );
+      await addSong({
+        naziv,
+        umetnik,
+        youtubeId,
+        kategorijaId: selectedCategory,
+      });
       toast.success("Pesma uspešno dodata!");
       const updatedSongs = await fetchAllSongs("newest");
       setSongs(updatedSongs);
@@ -38,8 +39,12 @@ const AddSongModal: React.FC<AddSongModalProps> = ({ show, onHide }) => {
       setYoutubeId("");
       setSelectedCategory(null);
       onHide();
-    } catch (error: any) {
-      toast.error(error.message || "Došlo je do greške pri dodavanju pesme.");
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      const message =
+        axiosError.response?.data?.message ||
+        "Došlo je do greške pri dodavanju pesme.";
+      toast.error(message);
     }
   };
 

@@ -10,18 +10,19 @@ import AuthButtons from "@/components/auth/AuthButtons";
 const HomePage: React.FC = () => {
   const { selectedGenre, sortBy } = useFilters();
   const { setSongs } = usePlayer();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, checkAuth } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [showLoginFromRedirect, setShowLoginFromRedirect] = useState(false);
 
   useEffect(() => {
+    checkAuth();
     const params = new URLSearchParams(location.search);
     if (params.get("showLogin") === "true" && !isAuthenticated) {
       setShowLoginFromRedirect(true);
       navigate("/", { replace: true });
     }
-  }, [location.search, isAuthenticated, navigate]);
+  }, [location.search, isAuthenticated, navigate, checkAuth]);
 
   useEffect(() => {
     fetchAllSongs(
@@ -30,7 +31,7 @@ const HomePage: React.FC = () => {
     ).then((songs) => {
       setSongs(songs);
     });
-  }, [selectedGenre, sortBy, setSongs, isAuthenticated]);
+  }, [selectedGenre, sortBy, setSongs]);
 
   return (
     <>

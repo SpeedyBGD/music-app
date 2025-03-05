@@ -9,6 +9,7 @@ import SearchIcon from "@/components/icons/SearchIcon";
 import { useFilters } from "@/context/FiltersContext";
 import { usePlayer } from "@/context/PlayerContext";
 import { searchSongs } from "@/services/musicService";
+import { AxiosError } from "axios";
 
 interface MobileMenuProps {
   show: boolean;
@@ -35,8 +36,11 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
       await logout();
       toast.success("Uspešno ste se odjavili!");
       onHide();
-    } catch (error: any) {
-      toast.error(error.message || "Došlo je do greške pri odjavi.");
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      const message =
+        axiosError.response?.data?.message || "Došlo je do greške pri odjavi.";
+      toast.error(message);
     }
   };
 

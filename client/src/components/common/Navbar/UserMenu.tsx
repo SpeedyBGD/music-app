@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import UserIcon from "@/components/icons/UserIcon";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "react-toastify";
+import { AxiosError } from "axios";
 
 interface UserMenuProps {
   onAddSongClick: () => void;
@@ -16,8 +17,11 @@ const UserMenu: React.FC<UserMenuProps> = ({ onAddSongClick }) => {
     try {
       await logout();
       toast.success("Uspešno ste se odjavili!");
-    } catch (error: any) {
-      toast.error(error.message || "Došlo je do greške pri odjavi.");
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      const message =
+        axiosError.response?.data?.message || "Došlo je do greške pri odjavi.";
+      toast.error(message);
     }
   };
 

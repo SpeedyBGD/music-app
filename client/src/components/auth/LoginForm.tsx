@@ -14,12 +14,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ onClose }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      await login(email, password);
-      toast.success("Uspešno ste se prijavili!");
+    const result = await login(email, password);
+    if (result.success) {
       onClose();
-    } catch (error: any) {
-      toast.error(error.message || "Došlo je do greške pri prijavi.");
+    } else {
+      toast.error(result.message);
     }
   };
 

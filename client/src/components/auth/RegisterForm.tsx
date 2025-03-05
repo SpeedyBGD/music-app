@@ -15,12 +15,12 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onClose }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      await register(email, password, confirmPassword);
+    const result = await register(email, password, confirmPassword);
+    if (result.success) {
       toast.success("Uspešno ste se registrovali!");
       onClose();
-    } catch (error: any) {
-      toast.error(error.message || "Došlo je do greške pri registraciji.");
+    } else {
+      toast.error(result.message);
     }
   };
 

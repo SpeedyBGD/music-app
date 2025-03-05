@@ -1,18 +1,22 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState } from "react";
 import axiosInstance from "@/services/axiosInterceptor";
-import { setupAxiosInterceptor } from "@/services/axiosInterceptor";
+import { AxiosError } from "axios";
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  token: string | null;
   email: string | null;
-  login: (email: string, password: string) => Promise<void>;
+  login: (
+    email: string,
+    password: string,
+  ) => Promise<{ success: boolean; message?: string }>;
   register: (
     email: string,
     password: string,
     confirmPassword: string,
-  ) => Promise<void>;
+  ) => Promise<{ success: boolean; message?: string }>;
   logout: () => Promise<void>;
+  checkAuth: () => Promise<void>;
+  onAuthChange: (callback: (isAuthenticated: boolean) => void) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -20,70 +24,94 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [token, setToken] = useState<string | null>(
-    localStorage.getItem("token"),
-  );
-  const [email, setEmail] = useState<string | null>(
-    localStorage.getItem("email"),
-  );
-  const isAuthenticated = !!token;
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [email, setEmail] = useState<string | null>(null);
+  const authChangeListeners: ((isAuthenticated: boolean) => void)[] = [];
 
-  const login = (email: string, password: string) =>
-    axiosInstance
-      .post("/auth/login", { email, password })
-      .then((response) => {
-        localStorage.setItem("token", response.data.token);
-        localStorage.setItem("email", email);
-        setToken(response.data.token);
-        setEmail(email);
-      })
-      .catch((error) => {
-        throw new Error(error.response?.data?.message);
+  const onAuthChange = (callback: (isAuthenticated: boolean) => void) => {
+    authChangeListeners.push(callback);
+  };
+
+  const notifyAuthChange = (isAuthenticated: boolean) => {
+    authChangeListeners.forEach((callback) => callback(isAuthenticated));
+  };
+
+  const checkAuth = async () => {
+    try {
+      const response = await axiosInstance.get("/auth/check", {
+        withCredentials: true,
       });
+      setIsAuthenticated(true);
+      setEmail(response.data.email);
+      notifyAuthChange(true);
+    } catch {
+      setIsAuthenticated(false);
+      setEmail(null);
+      notifyAuthChange(false);
+    }
+  };
 
-  const register = (email: string, password: string, confirmPassword: string) =>
-    axiosInstance
-      .post("/auth/register", { email, password, confirmPassword })
-      .then((response) => {
-        localStorage.setItem("token", response.data.token);
-        localStorage.setItem("email", email);
-        setToken(response.data.token);
-        setEmail(email);
-      })
-      .catch((error) => {
-        throw new Error(
-          error.response?.data?.message || "Greška pri registraciji",
-        );
-      });
+  const login = async (email: string, password: string) => {
+    try {
+      await axiosInstance.post(
+        "/auth/login",
+        { email, password },
+        { withCredentials: true },
+      );
+      setIsAuthenticated(true);
+      setEmail(email);
+      notifyAuthChange(true);
+      return { success: true };
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      const message =
+        axiosError.response?.data?.message || "Došlo je do greške pri prijavi.";
+      return { success: false, message };
+    }
+  };
 
-  const logout = () =>
-    axiosInstance
-      .post(
-        "/auth/logout",
-        {},
-        { headers: { Authorization: `Bearer ${token}` } },
-      )
-      .then(() => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("email");
-        setToken(null);
-        setEmail(null);
-      })
-      .catch((error) => {
-        console.error("Logout failed:", error);
-        localStorage.removeItem("token");
-        localStorage.removeItem("email");
-        setToken(null);
-        setEmail(null);
-      });
+  const register = async (
+    email: string,
+    password: string,
+    confirmPassword: string,
+  ) => {
+    try {
+      await axiosInstance.post(
+        "/auth/register",
+        { email, password, confirmPassword },
+        { withCredentials: true },
+      );
+      setIsAuthenticated(true);
+      setEmail(email);
+      notifyAuthChange(true);
+      return { success: true };
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      const message =
+        axiosError.response?.data?.message ||
+        "Došlo je do greške pri registraciji.";
+      return { success: false, message };
+    }
+  };
 
-  useEffect(() => {
-    setupAxiosInterceptor(logout);
-  }, []);
+  const logout = async () => {
+    await axiosInstance.post("/auth/logout", {}, { withCredentials: true });
+    setIsAuthenticated(false);
+    setEmail(null);
+    notifyAuthChange(false);
+  };
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, token, email, login, register, logout }}
+      value={{
+        isAuthenticated,
+        email,
+        login,
+        register,
+        logout,
+        checkAuth,
+        onAuthChange,
+      }}
     >
       {children}
     </AuthContext.Provider>

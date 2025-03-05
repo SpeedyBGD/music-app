@@ -3,9 +3,7 @@ import fs from 'fs';
 
 const DB_PATH = 'baza.sqlite';
 
-if (fs.existsSync(DB_PATH)) {
-  fs.unlinkSync(DB_PATH);
-}
+if (fs.existsSync(DB_PATH)) fs.unlinkSync(DB_PATH);
 
 const db = new Database(DB_PATH);
 
@@ -32,8 +30,7 @@ const migrations = [
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     email TEXT NOT NULL UNIQUE,
     lozinka TEXT NOT NULL,
-    jwtToken TEXT,
-    tokenBlacklistedAt TEXT
+    refreshToken TEXT
   );
   `,
   `
@@ -77,23 +74,7 @@ INSERT INTO pesme (naziv, umetnik, youtubeId, kategorijaId, uneto) VALUES
   `,
 ];
 
-function runMigrations(): void {
-  try {
-    db.exec('BEGIN TRANSACTION;');
-
-    for (const sql of migrations) {
-      db.exec(sql);
-      console.log('Migracija izvršena:', sql.split('\n')[0]);
-    }
-
-    db.exec('COMMIT;');
-    console.log('Sve migracije su uspešno završene!');
-  } catch (error) {
-    db.exec('ROLLBACK;');
-    console.error('Migracija je neuspešna:', error);
-  } finally {
-    db.close();
-  }
-}
-
-runMigrations();
+db.exec('BEGIN TRANSACTION;');
+migrations.forEach((sql) => db.exec(sql));
+db.exec('COMMIT;');
+db.close();

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { fetchCategories } from "@/services/categoryService";
 import { Category } from "@/types/music";
+import { useAuth } from "@/context/AuthContext";
 
 interface FiltersContextType {
   selectedGenre: number | "Sve";
@@ -20,6 +21,7 @@ export const FiltersProvider: React.FC<{ children: React.ReactNode }> = ({
   const [sortBy, setSortBy] = useState<"newest" | "popularity">("newest");
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  const { onAuthChange } = useAuth();
 
   useEffect(() => {
     const loadCategories = async () => {
@@ -34,7 +36,12 @@ export const FiltersProvider: React.FC<{ children: React.ReactNode }> = ({
     };
 
     loadCategories();
-  }, []);
+
+    onAuthChange(() => {
+      setSelectedGenre("Sve");
+      setSortBy("newest");
+    });
+  }, [onAuthChange]);
 
   return (
     <FiltersContext.Provider
@@ -54,8 +61,7 @@ export const FiltersProvider: React.FC<{ children: React.ReactNode }> = ({
 
 export const useFilters = () => {
   const context = useContext(FiltersContext);
-  if (!context) {
+  if (!context)
     throw new Error("useFilters must be used within a FiltersProvider");
-  }
   return context;
 };

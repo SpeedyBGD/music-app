@@ -9,40 +9,30 @@ import {
   addSongService,
 } from '@server/services/musicService';
 import { SongFilters } from '@server/models/Song';
+import User from '@server/models/User';
 
 export const likeSong = (req: Request, res: Response) => {
-  const userId = res.locals.user?.id;
+  const user = res.locals.user as User;
   const { songId } = req.body;
 
-  if (!userId) {
-    return res.status(401).json({ message: 'Neautorizovan pristup' });
-  }
+  if (!songId) return res.status(400).json({ message: 'ID pesme je obavezan' });
 
-  if (!songId) {
-    return res.status(400).json({ message: 'ID pesme je obavezan' });
-  }
-
-  const result = likeSongService(userId, songId);
-
-  if (result.error) {
+  const result = likeSongService(user.id, songId);
+  if (result.error)
     return res.status(result.status!).json({ message: result.message });
-  }
 
   return res.status(200).json({ message: 'Pesma je uspešno lajkovana' });
 };
 
 export const fetchCategories = (req: Request, res: Response) => {
   const result = getCategories();
-
-  if (result.error) {
+  if (result.error)
     return res.status(result.status!).json({ message: result.message });
-  }
-
   return res.status(200).json(result.data);
 };
 
 export const getFilteredSongs = (req: Request, res: Response) => {
-  const userId = res.locals.user?.id;
+  const user = res.locals.user as User | null;
   const filters: SongFilters = {
     kategorijaId: req.query.kategorijaId
       ? Number(req.query.kategorijaId)
@@ -53,22 +43,14 @@ export const getFilteredSongs = (req: Request, res: Response) => {
         : undefined,
   };
 
-  const result = getSongsByFilters(filters, userId);
-
-  if (result.error) {
+  const result = getSongsByFilters(filters, user?.id);
+  if (result.error)
     return res.status(result.status!).json({ message: result.message });
-  }
-
   return res.json(result.data);
 };
 
 export const getLikedSongs = (req: Request, res: Response) => {
-  const userId = res.locals.user?.id;
-
-  if (!userId) {
-    return res.status(401).json({ message: 'Neautorizovan pristup' });
-  }
-
+  const user = res.locals.user as User;
   const filters: SongFilters = {
     kategorijaId: req.query.kategorijaId
       ? Number(req.query.kategorijaId)
@@ -79,32 +61,21 @@ export const getLikedSongs = (req: Request, res: Response) => {
         : undefined,
   };
 
-  const result = getLikedSongsByFilter(userId, filters);
-
-  if (result.error) {
+  const result = getLikedSongsByFilter(user.id, filters);
+  if (result.error)
     return res.status(result.status!).json({ message: result.message });
-  }
-
   return res.status(200).json(result.data);
 };
 
 export const unlikeSong = (req: Request, res: Response) => {
-  const userId = res.locals.user?.id;
+  const user = res.locals.user as User;
   const { songId } = req.body;
 
-  if (!userId) {
-    return res.status(401).json({ message: 'Neautorizovan pristup' });
-  }
+  if (!songId) return res.status(400).json({ message: 'ID pesme je obavezan' });
 
-  if (!songId) {
-    return res.status(400).json({ message: 'ID pesme je obavezan' });
-  }
-
-  const result = unlikeSongService(userId, songId);
-
-  if (result.error) {
+  const result = unlikeSongService(user.id, songId);
+  if (result.error)
     return res.status(result.status!).json({ message: result.message });
-  }
 
   return res
     .status(200)
@@ -112,31 +83,23 @@ export const unlikeSong = (req: Request, res: Response) => {
 };
 
 export const searchSongsController = (req: Request, res: Response) => {
-  const userId = res.locals.user?.id;
+  const user = res.locals.user as User | null;
   const { query } = req.query;
 
-  if (!query || typeof query !== 'string') {
+  if (!query || typeof query !== 'string')
     return res
       .status(400)
       .json({ message: 'Pretraga zahteva tekstualni upit' });
-  }
 
-  const result = searchSongs(query, userId);
-
-  if (result.error) {
+  const result = searchSongs(query, user?.id);
+  if (result.error)
     return res.status(result.status!).json({ message: result.message });
-  }
-
   return res.status(200).json(result.data);
 };
 
 export const addSong = (req: Request, res: Response) => {
-  const userId = res.locals.user?.id;
+  const user = res.locals.user as User;
   const { naziv, umetnik, youtubeId, kategorijaId } = req.body;
-
-  if (!userId) {
-    return res.status(401).json({ message: 'Neautorizovan pristup' });
-  }
 
   const fields = [
     { name: 'Naziv pesme', value: naziv, isString: true },
@@ -152,13 +115,11 @@ export const addSong = (req: Request, res: Response) => {
         (typeof field.value !== 'string' || field.value.trim() === '')) ||
       (!field.isString && isNaN(Number(field.value)))
     ) {
-      return res
-        .status(400)
-        .json({
-          message: `${field.name} je obavezan i mora biti ${
-            field.isString ? 'tekst' : 'broj'
-          }`,
-        });
+      return res.status(400).json({
+        message: `${field.name} je obavezan i mora biti ${
+          field.isString ? 'tekst' : 'broj'
+        }`,
+      });
     }
   }
 
@@ -168,11 +129,8 @@ export const addSong = (req: Request, res: Response) => {
     youtubeId: youtubeId.trim(),
     kategorijaId: Number(kategorijaId),
   });
-
-  if (result.error) {
+  if (result.error)
     return res.status(result.status!).json({ message: result.message });
-  }
-
   return res
     .status(201)
     .json({ message: 'Pesma je uspešno dodata', songId: result.data });

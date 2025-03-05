@@ -4,68 +4,59 @@ import { API_BASE_URL } from "@/utils/constants";
 export const fetchAllSongs = (
   sortBy: "newest" | "popularity" = "newest",
   categoryId?: number,
-) => {
-  const token = localStorage.getItem("token");
-  return axiosInstance
+) =>
+  axiosInstance
     .get(`${API_BASE_URL}/music`, {
       params: {
         redosled: sortBy === "popularity" ? "lajkovi" : "datum",
         kategorijaId: categoryId,
       },
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      withCredentials: true,
     })
     .then((res) => res.data);
-};
 
 export const fetchLikedSongs = (
   sortBy: "newest" | "popularity" = "newest",
   categoryId?: number,
-) => {
-  const token = localStorage.getItem("token");
-  return axiosInstance
+) =>
+  axiosInstance
     .get(`${API_BASE_URL}/music/liked`, {
       params: {
         redosled: sortBy === "popularity" ? "lajkovi" : "datum",
         kategorijaId: categoryId,
       },
-      headers: { Authorization: `Bearer ${token}` },
+      withCredentials: true,
     })
     .then((res) => res.data);
-};
 
-export const likeSong = (songId: string, token: string) =>
+export const likeSong = (songId: string) =>
   axiosInstance.post(
     `${API_BASE_URL}/music/like`,
     { songId },
-    { headers: { Authorization: `Bearer ${token}` } },
+    { withCredentials: true },
   );
 
-export const unlikeSong = (songId: string, token: string) =>
+export const unlikeSong = (songId: string) =>
   axiosInstance.post(
     `${API_BASE_URL}/music/unlike`,
     { songId },
-    { headers: { Authorization: `Bearer ${token}` } },
+    { withCredentials: true },
   );
 
-export const searchSongs = (query: string) => {
-  const token = localStorage.getItem("token");
-  return axiosInstance
+export const searchSongs = (query: string) =>
+  axiosInstance
     .get(`${API_BASE_URL}/music/search`, {
       params: { query },
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      withCredentials: true,
     })
     .then((res) => res.data);
-};
 
-export const addSong = (
-  song: {
-    naziv: string;
-    umetnik: string;
-    youtubeId: string;
-    kategorijaId: number;
-  },
-  token: string,
-) =>
+export const addSong = (song: {
+  naziv: string;
+  umetnik: string;
+  youtubeId: string;
+  kategorijaId: number;
+}) =>
   axiosInstance.post(`${API_BASE_URL}/music/add`, song, {
-    headers: { Authorization: `Bearer ${token}` },
+    withCredentials: true,
   });

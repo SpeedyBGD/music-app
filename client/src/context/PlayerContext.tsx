@@ -1,8 +1,9 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import { Song } from "@/types/music";
-import { likeSong, unlikeSong } from "@/services/musicService";
+import { likeSong, unlikeSong, fetchAllSongs } from "@/services/musicService";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "react-toastify";
+import { AxiosError } from "axios";
 
 interface PlayerContextType {
   currentSong: Song | null;
@@ -24,7 +25,20 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isPlaying, setIsPlaying] = useState(false);
   const [songs, setSongs] = useState<Song[]>([]);
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
-  const { token, isAuthenticated } = useAuth();
+  const { onAuthChange } = useAuth();
+
+  useEffect(() => {
+    const refreshSongs = async () => {
+      const updatedSongs = await fetchAllSongs("newest");
+      setSongs(updatedSongs);
+    };
+
+    refreshSongs();
+
+    onAuthChange(() => {
+      refreshSongs();
+    });
+  }, [onAuthChange]);
 
   const playSong = (song: Song) => {
     const index = songs.findIndex((s) => s.id === song.id);
@@ -45,8 +59,6 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const toggleLike = async (songId: string) => {
-    if (!isAuthenticated || !token) return;
-
     const songIndex = songs.findIndex((s) => s.id === songId);
     if (songIndex === -1) return;
 
@@ -55,7 +67,7 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
 
     try {
       if (isLiked) {
-        await unlikeSong(songId, token);
+        await unlikeSong(songId);
         updatedSongs[songIndex] = {
           ...updatedSongs[songIndex],
           lajkovaoKorisnik: 0,
@@ -63,7 +75,7 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
         };
         toast.success("Uklonili ste lajk sa pesme");
       } else {
-        await likeSong(songId, token);
+        await likeSong(songId);
         updatedSongs[songIndex] = {
           ...updatedSongs[songIndex],
           lajkovaoKorisnik: 1,
@@ -73,15 +85,13 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
       }
 
       setSongs(updatedSongs);
-
-      if (currentSong?.id === songId) {
-        setCurrentSong(updatedSongs[songIndex]);
-      }
-    } catch (error: any) {
-      toast.error(
-        error.response?.data?.message ||
-          "Došlo je do greške prilikom lajkovanja pesme.",
-      );
+      if (currentSong?.id === songId) setCurrentSong(updatedSongs[songIndex]);
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      const message =
+        axiosError.response?.data?.message ||
+        "Došlo je do greške prilikom lajkovanja pesme.";
+      toast.error(message);
     }
   };
 

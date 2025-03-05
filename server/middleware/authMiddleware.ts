@@ -1,45 +1,74 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import User from '@server/models/User';
 import db from '@server/utils/db';
 import { getJwtSecret } from '@server/utils/jwtUtils';
-import { checkTokenBlacklist } from '@server/services/authService';
+import User from '@server/models/User';
 
-export const authenticate = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const token = req.headers['authorization']?.split(' ')[1];
-
-  if (!token) {
-    res.locals.user = null;
-    return next();
-  }
-
-  try {
+export const authMiddleware = (requireAuth: boolean = false) => {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    let accessToken = req.cookies.accessToken;
+    const refreshToken = req.cookies.refreshToken;
     const JWT_SECRET = getJwtSecret();
 
-    if (checkTokenBlacklist(token)) {
-      return res.status(401).json({ message: 'Token je poništen' });
+    if (!accessToken && !refreshToken) {
+      if (requireAuth)
+        return res.status(401).json({ message: 'Neautorizovan pristup' });
+      res.locals.user = null;
+      return next();
     }
 
-    const decoded = jwt.verify(token, JWT_SECRET) as User;
+    try {
+      if (accessToken) {
+        const decoded = jwt.verify(accessToken, JWT_SECRET) as {
+          id: number;
+          email: string;
+        };
+        const user = db
+          .prepare('SELECT id, email FROM korisnici WHERE id = ?')
+          .get(decoded.id) as User;
+        if (user) {
+          res.locals.user = user;
+          return next();
+        }
+      }
 
-    const user = db
-      .prepare('SELECT * FROM korisnici WHERE id = ?')
-      .get(decoded.id) as User | undefined;
+      if (refreshToken) {
+        const decoded = jwt.verify(refreshToken, JWT_SECRET) as {
+          id: number;
+          email: string;
+        };
+        const user = db
+          .prepare(
+            'SELECT id, email FROM korisnici WHERE id = ? AND refreshToken = ?'
+          )
+          .get(decoded.id, refreshToken) as User;
+        if (!user) throw new Error('Invalid refresh token');
 
-    if (!user) {
-      return res.status(401).json({ message: 'Korisnik više ne postoji' });
+        const newAccessToken = jwt.sign(
+          { id: user.id, email: user.email },
+          JWT_SECRET,
+          { expiresIn: '15m' }
+        );
+        res.cookie('accessToken', newAccessToken, {
+          httpOnly: true,
+          secure: false,
+          maxAge: 15 * 60 * 1000,
+        });
+        res.locals.user = user;
+        return next();
+      }
+
+      if (requireAuth)
+        return res.status(401).json({ message: 'Neautorizovan pristup' });
+      res.locals.user = null;
+      return next();
+    } catch (error) {
+      res.clearCookie('accessToken');
+      res.clearCookie('refreshToken');
+      if (requireAuth)
+        return res.status(401).json({ message: 'Nevalidan ili istekao token' });
+      res.locals.user = null;
+      return next();
     }
-
-    res.locals.user = decoded;
-    next();
-  } catch (error) {
-    return res.status(401).json({
-      message: 'Nevalidan ili istekao token',
-      error: error instanceof Error ? error.message : 'Nepoznata greška',
-    });
-  }
+  };
 };
