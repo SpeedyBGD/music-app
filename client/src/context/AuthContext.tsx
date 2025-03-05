@@ -28,60 +28,54 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   );
   const isAuthenticated = !!token;
 
-  const login = async (email: string, password: string) => {
-    try {
-      const response = await axiosInstance.post("/auth/login", {
-        email,
-        password,
+  const login = (email: string, password: string) =>
+    axiosInstance
+      .post("/auth/login", { email, password })
+      .then((response) => {
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("email", email);
+        setToken(response.data.token);
+        setEmail(email);
+      })
+      .catch((error) => {
+        throw new Error(error.response?.data?.message);
       });
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("email", email);
-      setToken(response.data.token);
-      setEmail(email);
-    } catch (error: any) {
-      throw new Error(
-        error.response?.data?.message || "Pogrešan email ili lozinka",
-      );
-    }
-  };
 
-  const register = async (
-    email: string,
-    password: string,
-    confirmPassword: string,
-  ) => {
-    try {
-      const response = await axiosInstance.post("/auth/register", {
-        email,
-        password,
-        confirmPassword,
+  const register = (email: string, password: string, confirmPassword: string) =>
+    axiosInstance
+      .post("/auth/register", { email, password, confirmPassword })
+      .then((response) => {
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("email", email);
+        setToken(response.data.token);
+        setEmail(email);
+      })
+      .catch((error) => {
+        throw new Error(
+          error.response?.data?.message || "Greška pri registraciji",
+        );
       });
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("email", email);
-      setToken(response.data.token);
-      setEmail(email);
-    } catch (error: any) {
-      throw new Error(
-        error.response?.data?.message || "Greška pri registraciji",
-      );
-    }
-  };
 
-  const logout = async () => {
-    try {
-      await axiosInstance.post(
+  const logout = () =>
+    axiosInstance
+      .post(
         "/auth/logout",
         {},
         { headers: { Authorization: `Bearer ${token}` } },
-      );
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
-    localStorage.removeItem("token");
-    localStorage.removeItem("email");
-    setToken(null);
-    setEmail(null);
-  };
+      )
+      .then(() => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("email");
+        setToken(null);
+        setEmail(null);
+      })
+      .catch((error) => {
+        console.error("Logout failed:", error);
+        localStorage.removeItem("token");
+        localStorage.removeItem("email");
+        setToken(null);
+        setEmail(null);
+      });
 
   useEffect(() => {
     setupAxiosInterceptor(logout);

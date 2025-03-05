@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { Category, fetchCategories } from "@/services/categoryService";
+import { fetchCategories } from "@/services/categoryService";
+import { Category } from "@/types/music";
 
 interface FiltersContextType {
   selectedGenre: number | "Sve";
