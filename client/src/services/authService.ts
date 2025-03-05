@@ -1,22 +1,35 @@
-import axiosInstance from "./axiosInterceptor";
+import axiosInstance from "@/services/axiosInterceptor";
 
-export const login = (email: string, password: string) =>
-  axiosInstance
-    .post("/auth/login", { email, password })
-    .then((res) => res.data);
+interface AuthResponse {
+  email: string;
+}
+
+export const checkAuth = (): Promise<AuthResponse> => {
+  return axiosInstance
+    .get("/auth/check", { withCredentials: true })
+    .then((response) => response.data);
+};
+
+export const login = (email: string, password: string): Promise<void> => {
+  return axiosInstance.post(
+    "/auth/login",
+    { email, password },
+    { withCredentials: true },
+  );
+};
 
 export const register = (
   email: string,
   password: string,
   confirmPassword: string,
-) =>
-  axiosInstance
-    .post("/auth/register", { email, password, confirmPassword })
-    .then((res) => res.data);
-
-export const logout = (token: string) =>
-  axiosInstance.post(
-    "/auth/logout",
-    {},
-    { headers: { Authorization: `Bearer ${token}` } },
+): Promise<void> => {
+  return axiosInstance.post(
+    "/auth/register",
+    { email, password, confirmPassword },
+    { withCredentials: true },
   );
+};
+
+export const logout = (): Promise<void> => {
+  return axiosInstance.post("/auth/logout", {}, { withCredentials: true });
+};

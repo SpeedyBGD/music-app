@@ -1,15 +1,10 @@
-// src/pages/LikedSongsPage.tsx
 import React, { useEffect } from "react";
-import { useFilters } from "@/context/FiltersContext";
-import { usePlayer } from "@/context/PlayerContext";
-import { useAuth } from "@/context/AuthContext";
+import { useAppContext } from "@/context/AppContext";
 import SongCollection from "@/components/songs/SongCollection";
 import { fetchLikedSongs } from "@/services/musicService";
 
 const LikedSongsPage: React.FC = () => {
-  const { selectedGenre, sortBy } = useFilters();
-  const { setSongs } = usePlayer();
-  const { isAuthenticated } = useAuth();
+  const { selectedGenre, sortBy, setSongs } = useAppContext();
 
   useEffect(() => {
     fetchLikedSongs(
@@ -18,7 +13,7 @@ const LikedSongsPage: React.FC = () => {
     ).then((songs) => {
       setSongs(songs);
     });
-  }, [selectedGenre, sortBy, setSongs, isAuthenticated]);
+  }, [selectedGenre, sortBy, setSongs]);
 
   return (
     <SongCollection

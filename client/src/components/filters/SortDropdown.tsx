@@ -1,12 +1,10 @@
 import React from "react";
 import { Dropdown, Stack } from "react-bootstrap";
-import { useFilters } from "@/context/FiltersContext";
-import { usePlayer } from "@/context/PlayerContext";
+import { useAppContext } from "@/context/AppContext";
 import { fetchAllSongs } from "@/services/musicService";
 
 const SortDropdown: React.FC = () => {
-  const { sortBy, setSortBy, selectedGenre } = useFilters();
-  const { setSongs } = usePlayer();
+  const { sortBy, setSortBy, selectedGenre, setSongs } = useAppContext();
 
   const handleSortChange = async (newSortBy: "newest" | "popularity") => {
     setSortBy(newSortBy);

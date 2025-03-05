@@ -1,20 +1,16 @@
 import React from "react";
 import { Button } from "react-bootstrap";
-import { useFilters } from "@/context/FiltersContext";
-import { usePlayer } from "@/context/PlayerContext";
+import { useAppContext } from "@/context/AppContext";
 import { fetchAllSongs } from "@/services/musicService";
 
 const GenreFilter: React.FC = () => {
-  const { selectedGenre, setSelectedGenre, categories, loading, sortBy } =
-    useFilters();
-  const { setSongs } = usePlayer();
-
-  if (loading) return null;
+  const { selectedGenre, setSelectedGenre, categories, setSongs } =
+    useAppContext();
 
   const handleGenreChange = async (genre: number | "Sve") => {
     setSelectedGenre(genre);
     const songs = await fetchAllSongs(
-      sortBy,
+      "newest",
       genre === "Sve" ? undefined : genre,
     );
     setSongs(songs);

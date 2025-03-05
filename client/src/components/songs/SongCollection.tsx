@@ -4,7 +4,7 @@ import GenreFilter from "@/components/filters/GenreFilter";
 import SortDropdown from "@/components/filters/SortDropdown";
 import SongGrid from "@/components/songs/SongGrid";
 import PlayerOverlay from "@/components/songs/PlayerOverlay";
-import { usePlayer } from "@/context/PlayerContext";
+import { useAppContext } from "@/context/AppContext";
 
 interface SongCollectionProps {
   title?: string;
@@ -15,7 +15,7 @@ const SongCollection: React.FC<SongCollectionProps> = ({
   title,
   titleClassName = "",
 }) => {
-  const { songs } = usePlayer();
+  const { songs } = useAppContext();
 
   return (
     <div className="container mt-4">

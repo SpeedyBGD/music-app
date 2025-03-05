@@ -3,13 +3,17 @@ import YouTube from "react-youtube";
 import HeartIcon from "@/components/icons/HeartIcon";
 import NextSongIcon from "@/components/icons/NextSongIcon";
 import Modal from "@/components/common/Modal";
-import { usePlayer } from "@/context/PlayerContext";
-import { useAuth } from "@/context/AuthContext";
+import { useAppContext } from "@/context/AppContext";
 
 const PlayerOverlay: React.FC = () => {
-  const { currentSong, isPlaying, setIsPlaying, playNext, toggleLike } =
-    usePlayer();
-  const { isAuthenticated } = useAuth();
+  const {
+    currentSong,
+    isPlaying,
+    setIsPlaying,
+    playNext,
+    toggleLike,
+    isAuthenticated,
+  } = useAppContext();
 
   if (!currentSong) return null;
 

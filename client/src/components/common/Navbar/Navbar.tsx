@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Container } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { useAuth } from "@/context/AuthContext";
+import { useAppContext } from "@/context/AppContext";
 import LogoIcon from "@/components/icons/LogoIcon";
 import MenuIcon from "@/components/icons/MenuIcon";
 import SearchBar from "./SearchBar";
@@ -9,23 +9,16 @@ import AuthButtons from "./AuthButtons";
 import UserMenu from "./UserMenu";
 import MobileMenu from "./MobileMenu";
 import AddSongModal from "@/components/songs/AddSongModal";
-import { usePlayer } from "@/context/PlayerContext";
 import { fetchAllSongs } from "@/services/musicService";
-import { useFilters } from "@/context/FiltersContext";
 
 const Navbar: React.FC = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showAddSongModal, setShowAddSongModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const { isAuthenticated } = useAuth();
-  const { setSongs } = usePlayer();
-  const { selectedGenre, sortBy } = useFilters();
+  const { isAuthenticated, setSongs } = useAppContext();
 
   const handleLogoClick = async () => {
-    const songs = await fetchAllSongs(
-      sortBy,
-      selectedGenre === "Sve" ? undefined : selectedGenre,
-    );
+    const songs = await fetchAllSongs("newest");
     setSongs(songs);
     setSearchQuery("");
   };

@@ -2,8 +2,7 @@ import React from "react";
 import { Button } from "react-bootstrap";
 import SearchIcon from "@/components/icons/SearchIcon";
 import { useNavigate } from "react-router-dom";
-import { useFilters } from "@/context/FiltersContext";
-import { usePlayer } from "@/context/PlayerContext";
+import { useAppContext } from "@/context/AppContext";
 import { searchSongs } from "@/services/musicService";
 
 interface SearchBarProps {
@@ -13,8 +12,7 @@ interface SearchBarProps {
 
 const SearchBar: React.FC<SearchBarProps> = ({ query, setQuery }) => {
   const navigate = useNavigate();
-  const { setSelectedGenre, setSortBy } = useFilters();
-  const { setSongs } = usePlayer();
+  const { setSelectedGenre, setSortBy, setSongs } = useAppContext();
 
   const handleSearch = async () => {
     if (!query.trim()) return;

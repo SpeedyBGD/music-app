@@ -2,7 +2,7 @@ import React from "react";
 import { Dropdown } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import UserIcon from "@/components/icons/UserIcon";
-import { useAuth } from "@/context/AuthContext";
+import { useAppContext } from "@/context/AppContext";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 
@@ -11,7 +11,7 @@ interface UserMenuProps {
 }
 
 const UserMenu: React.FC<UserMenuProps> = ({ onAddSongClick }) => {
-  const { logout, email } = useAuth();
+  const { logout, email } = useAppContext();
 
   const handleLogout = async () => {
     try {

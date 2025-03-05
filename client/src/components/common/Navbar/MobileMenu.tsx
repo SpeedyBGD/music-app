@@ -2,12 +2,10 @@ import React from "react";
 import { Offcanvas, Form, Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import AuthButtons from "./AuthButtons";
-import { useAuth } from "@/context/AuthContext";
+import { useAppContext } from "@/context/AppContext";
 import { toast } from "react-toastify";
 import UserIcon from "@/components/icons/UserIcon";
 import SearchIcon from "@/components/icons/SearchIcon";
-import { useFilters } from "@/context/FiltersContext";
-import { usePlayer } from "@/context/PlayerContext";
 import { searchSongs } from "@/services/musicService";
 import { AxiosError } from "axios";
 
@@ -26,10 +24,9 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
   query,
   setQuery,
 }) => {
-  const { logout, email } = useAuth();
+  const { logout, email, setSelectedGenre, setSortBy, setSongs } =
+    useAppContext();
   const navigate = useNavigate();
-  const { setSelectedGenre, setSortBy } = useFilters();
-  const { setSongs } = usePlayer();
 
   const handleLogout = async () => {
     try {

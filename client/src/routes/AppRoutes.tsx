@@ -3,12 +3,12 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import HomePage from "@/pages/HomePage";
 import LikedSongsPage from "@/pages/LikedSongsPage";
 import NotFoundPage from "@/pages/NotFoundPage";
-import { useAuth } from "@/context/AuthContext";
+import { useAppContext } from "@/context/AppContext";
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAppContext();
   return isAuthenticated ? <>{children}</> : <Navigate to="/" replace />;
 };
 
