@@ -32,8 +32,6 @@ const HomePage: React.FC = () => {
       setShowLoginModal(true);
       setShowRegister(false);
     }
-
-    refreshSongs();
   }, [location.search, refreshSongs, setShowLoginModal]);
 
   const handleCloseAuth = () => {
