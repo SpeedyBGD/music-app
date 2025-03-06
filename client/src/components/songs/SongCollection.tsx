@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Row, Col } from "react-bootstrap";
 import GenreFilter from "@/components/filters/GenreFilter";
 import SortDropdown from "@/components/filters/SortDropdown";
@@ -18,10 +18,16 @@ const SongCollection: React.FC<SongCollectionProps> = ({
   fetchSongs,
 }) => {
   const { songs, selectedGenre, sortBy } = useAppContext();
+  const [isSongsLoaded, setIsSongsLoaded] = useState(false);
 
   useEffect(() => {
-    fetchSongs();
+    setIsSongsLoaded(false);
+    fetchSongs().then(() => {
+      setIsSongsLoaded(true);
+    });
   }, [fetchSongs, selectedGenre, sortBy]);
+
+  if (!isSongsLoaded) return null;
 
   return (
     <div className="container mt-4">

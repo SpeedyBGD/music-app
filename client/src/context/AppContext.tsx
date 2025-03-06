@@ -39,6 +39,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -71,22 +72,28 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       console.error("Failed to refresh songs:", error);
       toast.error("Došlo je do greške pri učitavanju pesama.");
     }
-  }, [selectedGenre, sortBy, location.pathname, setSongs]);
+  }, [selectedGenre, sortBy, location.pathname]);
 
   useEffect(() => {
-    checkAuth()
-      .then((response) => {
-        setIsAuthenticated(true);
-        setEmail(response.email);
+    setIsLoading(true);
+    Promise.all([
+      checkAuth()
+        .then((response) => {
+          setIsAuthenticated(true);
+          setEmail(response.email);
+        })
+        .catch(() => {
+          setIsAuthenticated(false);
+          setEmail(null);
+        }),
+      fetchCategories()
+        .then((categoriesData) => setCategories(categoriesData))
+        .catch(() => {}),
+    ])
+      .then(() => {
+        setTimeout(() => setIsLoading(false), 300);
       })
-      .catch(() => {
-        setIsAuthenticated(false);
-        setEmail(null);
-      });
-
-    fetchCategories()
-      .then((categoriesData) => setCategories(categoriesData))
-      .catch(() => {});
+      .catch(() => setIsLoading(false));
   }, []);
 
   const login = async (email: string, password: string) => {
@@ -231,6 +238,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
         refreshSongs,
         showLoginModal,
         setShowLoginModal,
+        isLoading,
       }}
     >
       {children}

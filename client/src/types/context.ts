@@ -1,3 +1,4 @@
+// File: types/context.ts
 import { Song, Category } from "@/types/music";
 
 export interface AppContextType {
@@ -30,4 +31,5 @@ export interface AppContextType {
   refreshSongs: () => Promise<void>;
   showLoginModal: boolean;
   setShowLoginModal: (show: boolean) => void;
+  isLoading: boolean;
 }

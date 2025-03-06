@@ -1,6 +1,11 @@
+// File: assets/styles/main.scss
 @import "variables";
 @import "bootstrap/scss/bootstrap";
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap");
+
+body {
+  overflow-y: scroll;
+}
 
 * {
   font-family: "Montserrat", sans-serif;
@@ -48,5 +53,18 @@ main {
 @media (max-width: 767px) {
   main {
     padding-top: 64px;
+  }
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
