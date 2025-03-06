@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Container } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAppContext } from "@/context/AppContext";
 import LogoIcon from "@/components/icons/LogoIcon";
 import MenuIcon from "@/components/icons/MenuIcon";
@@ -9,18 +9,19 @@ import AuthButtons from "./AuthButtons";
 import UserMenu from "./UserMenu";
 import MobileMenu from "./MobileMenu";
 import AddSongModal from "@/components/songs/AddSongModal";
-import { fetchAllSongs } from "@/services/musicService";
 
 const Navbar: React.FC = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showAddSongModal, setShowAddSongModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const { isAuthenticated, setSongs } = useAppContext();
+  const { isAuthenticated, setSelectedGenre, setSortBy } = useAppContext();
+  const navigate = useNavigate();
 
-  const handleLogoClick = async () => {
-    const songs = await fetchAllSongs("newest");
-    setSongs(songs);
+  const handleLogoClick = () => {
+    setSelectedGenre("Sve");
+    setSortBy("newest");
     setSearchQuery("");
+    navigate("/");
   };
 
   return (

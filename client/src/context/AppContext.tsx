@@ -1,6 +1,12 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 import { fetchCategories } from "@/services/categoryService";
-import { fetchAllSongs, likeSong, unlikeSong } from "@/services/musicService";
+import { likeSong, unlikeSong, fetchAllSongs } from "@/services/musicService";
 import {
   checkAuth,
   login as authLogin,
@@ -24,6 +30,7 @@ interface AppContextType {
     confirmPassword: string,
   ) => Promise<{ success: boolean; message?: string }>;
   logout: () => Promise<void>;
+  handleLogout: () => void;
   categories: Category[];
   selectedGenre: number | "Sve";
   setSelectedGenre: (genre: number | "Sve") => void;
@@ -37,6 +44,9 @@ interface AppContextType {
   playNext: () => void;
   setIsPlaying: (isPlaying: boolean) => void;
   toggleLike: (songId: string) => Promise<void>;
+  refreshSongs: () => Promise<void>;
+  showLoginModal: boolean;
+  setShowLoginModal: (show: boolean) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -53,15 +63,34 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   const [currentSong, setCurrentSong] = useState<Song | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
-  const [authChanged, setAuthChanged] = useState(0);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
-  const resetFilters = () => {
+  const resetFilters = useCallback(() => {
     setSelectedGenre("Sve");
     setSortBy("newest");
     setCurrentSong(null);
     setCurrentIndex(null);
     setIsPlaying(false);
-  };
+  }, []);
+
+  const handleLogout = useCallback(() => {
+    setIsAuthenticated(false);
+    setEmail(null);
+    resetFilters();
+  }, [resetFilters]);
+
+  const refreshSongs = useCallback(async () => {
+    try {
+      const songs = await fetchAllSongs(
+        sortBy,
+        selectedGenre === "Sve" ? undefined : selectedGenre,
+      );
+      setSongs(songs);
+    } catch (error) {
+      console.error("Failed to refresh songs:", error);
+      toast.error("Došlo je do greške pri učitavanju pesama.");
+    }
+  }, [selectedGenre, sortBy, setSongs]);
 
   useEffect(() => {
     checkAuth()
@@ -77,31 +106,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     fetchCategories()
       .then((categoriesData) => setCategories(categoriesData))
       .catch(() => {});
-  }, [authChanged]);
-
-  useEffect(() => {
-    fetchAllSongs(sortBy, selectedGenre === "Sve" ? undefined : selectedGenre)
-      .then((songsData) => {
-        setSongs(songsData);
-
-        if (
-          currentSong &&
-          !songsData.some((s: Song) => s.id === currentSong.id)
-        ) {
-          setCurrentSong(null);
-          setCurrentIndex(null);
-          setIsPlaying(false);
-        } else if (currentSong) {
-          const updatedCurrentSong = songsData.find(
-            (s: Song) => s.id === currentSong.id,
-          );
-          if (updatedCurrentSong) {
-            setCurrentSong(updatedCurrentSong);
-          }
-        }
-      })
-      .catch(() => {});
-  }, [selectedGenre, sortBy, authChanged, currentSong]);
+  }, []);
 
   const login = async (email: string, password: string) => {
     try {
@@ -109,7 +114,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       setIsAuthenticated(true);
       setEmail(email);
       resetFilters();
-      setAuthChanged((prev) => prev + 1);
+      await refreshSongs();
       return { success: true };
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
@@ -129,7 +134,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       setIsAuthenticated(true);
       setEmail(email);
       resetFilters();
-      setAuthChanged((prev) => prev + 1);
+      await refreshSongs();
       return { success: true };
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
@@ -141,22 +146,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const logout = async () => {
-    await authLogout().then(() => {
-      setIsAuthenticated(false);
-      setEmail(null);
-      resetFilters();
-      setAuthChanged((prev) => prev + 1);
-    });
+    try {
+      await authLogout();
+      handleLogout();
+      await refreshSongs();
+      return Promise.resolve();
+    } catch (error) {
+      return Promise.reject(error);
+    }
   };
 
-  const playSong = (song: Song) => {
-    const index = songs.findIndex((s: Song) => s.id === song.id);
-    setCurrentSong(song);
-    setCurrentIndex(index !== -1 ? index : null);
-    setIsPlaying(true);
-  };
+  const playSong = useCallback(
+    (song: Song) => {
+      const index = songs.findIndex((s: Song) => s.id === song.id);
+      setCurrentSong(song);
+      setCurrentIndex(index !== -1 ? index : null);
+      setIsPlaying(true);
+    },
+    [songs],
+  );
 
-  const playNext = () => {
+  const playNext = useCallback(() => {
     if (currentIndex !== null && currentIndex < songs.length - 1) {
       setCurrentSong(songs[currentIndex + 1]);
       setCurrentIndex(currentIndex + 1);
@@ -165,11 +175,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       setCurrentIndex(null);
       setIsPlaying(false);
     }
-  };
+  }, [currentIndex, songs]);
 
   const toggleLike = async (songId: string) => {
     if (!isAuthenticated) {
-      toast.error("Morate biti prijavljeni da biste lajkovali pesmu");
+      toast.info("Morate biti prijavljeni da biste lajkovali pesmu");
+      setShowLoginModal(true);
       return;
     }
 
@@ -200,11 +211,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       setSongs(updatedSongs);
       if (currentSong?.id === songId) setCurrentSong(updatedSongs[songIndex]);
     } catch (error) {
-      const axiosError = error as AxiosError<{ message: string }>;
-      const message =
-        axiosError.response?.data?.message ||
-        "Došlo je do greške prilikom lajkovanja pesme.";
-      toast.error(message);
+      if ((error as AxiosError).response?.status !== 401) {
+        const axiosError = error as AxiosError<{ message: string }>;
+        const message =
+          axiosError.response?.data?.message ||
+          "Došlo je do greške prilikom lajkovanja pesme.";
+        toast.error(message);
+      }
     }
   };
 
@@ -216,6 +229,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
         login,
         register,
         logout,
+        handleLogout,
         categories,
         selectedGenre,
         setSelectedGenre,
@@ -229,6 +243,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
         playNext,
         setIsPlaying,
         toggleLike,
+        refreshSongs,
+        showLoginModal,
+        setShowLoginModal,
       }}
     >
       {children}

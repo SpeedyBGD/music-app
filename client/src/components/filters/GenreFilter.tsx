@@ -1,19 +1,12 @@
 import React from "react";
 import { Button } from "react-bootstrap";
 import { useAppContext } from "@/context/AppContext";
-import { fetchAllSongs } from "@/services/musicService";
 
 const GenreFilter: React.FC = () => {
-  const { selectedGenre, setSelectedGenre, categories, setSongs } =
-    useAppContext();
+  const { selectedGenre, setSelectedGenre, categories } = useAppContext();
 
-  const handleGenreChange = async (genre: number | "Sve") => {
+  const handleGenreChange = (genre: number | "Sve") => {
     setSelectedGenre(genre);
-    const songs = await fetchAllSongs(
-      "newest",
-      genre === "Sve" ? undefined : genre,
-    );
-    setSongs(songs);
   };
 
   return (

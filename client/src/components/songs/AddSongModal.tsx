@@ -15,7 +15,7 @@ const AddSongModal: React.FC<AddSongModalProps> = ({ show, onHide }) => {
   const [umetnik, setUmetnik] = useState("");
   const [youtubeId, setYoutubeId] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
-  const { categories, setSongs } = useAppContext();
+  const { categories, setSongs, refreshSongs } = useAppContext();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,8 +29,9 @@ const AddSongModal: React.FC<AddSongModalProps> = ({ show, onHide }) => {
         kategorijaId: selectedCategory,
       });
       toast.success("Pesma uspešno dodata!");
-      const updatedSongs = await fetchAllSongs("newest");
-      setSongs(updatedSongs);
+
+      await refreshSongs();
+
       setNaziv("");
       setUmetnik("");
       setYoutubeId("");

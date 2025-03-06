@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useAppContext } from "@/context/AppContext";
 import SongCollection from "@/components/songs/SongCollection";
 import { fetchLikedSongs } from "@/services/musicService";
@@ -6,19 +6,19 @@ import { fetchLikedSongs } from "@/services/musicService";
 const LikedSongsPage: React.FC = () => {
   const { selectedGenre, sortBy, setSongs } = useAppContext();
 
-  useEffect(() => {
-    fetchLikedSongs(
+  const fetchSongs = useCallback(async () => {
+    const songs = await fetchLikedSongs(
       sortBy,
       selectedGenre === "Sve" ? undefined : selectedGenre,
-    ).then((songs) => {
-      setSongs(songs);
-    });
+    );
+    setSongs(songs);
   }, [selectedGenre, sortBy, setSongs]);
 
   return (
     <SongCollection
       title="Moje Omiljene Pesme"
       titleClassName="text-secondary"
+      fetchSongs={fetchSongs}
     />
   );
 };

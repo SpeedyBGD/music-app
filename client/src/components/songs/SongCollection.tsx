@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Row, Col } from "react-bootstrap";
 import GenreFilter from "@/components/filters/GenreFilter";
 import SortDropdown from "@/components/filters/SortDropdown";
@@ -9,13 +9,19 @@ import { useAppContext } from "@/context/AppContext";
 interface SongCollectionProps {
   title?: string;
   titleClassName?: string;
+  fetchSongs: () => Promise<void>;
 }
 
 const SongCollection: React.FC<SongCollectionProps> = ({
   title,
   titleClassName = "",
+  fetchSongs,
 }) => {
-  const { songs } = useAppContext();
+  const { songs, selectedGenre, sortBy } = useAppContext();
+
+  useEffect(() => {
+    fetchSongs();
+  }, [fetchSongs, selectedGenre, sortBy]);
 
   return (
     <div className="container mt-4">

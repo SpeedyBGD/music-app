@@ -1,18 +1,12 @@
 import React from "react";
 import { Dropdown, Stack } from "react-bootstrap";
 import { useAppContext } from "@/context/AppContext";
-import { fetchAllSongs } from "@/services/musicService";
 
 const SortDropdown: React.FC = () => {
-  const { sortBy, setSortBy, selectedGenre, setSongs } = useAppContext();
+  const { sortBy, setSortBy } = useAppContext();
 
-  const handleSortChange = async (newSortBy: "newest" | "popularity") => {
+  const handleSortChange = (newSortBy: "newest" | "popularity") => {
     setSortBy(newSortBy);
-    const songs = await fetchAllSongs(
-      newSortBy,
-      selectedGenre === "Sve" ? undefined : selectedGenre,
-    );
-    setSongs(songs);
   };
 
   return (
