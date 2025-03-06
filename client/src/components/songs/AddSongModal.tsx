@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Modal, Form, Button, Dropdown } from "react-bootstrap";
 import { useAppContext } from "@/context/AppContext";
-import { addSong, fetchAllSongs } from "@/services/musicService";
+import { addSong } from "@/services/musicService";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 
@@ -15,7 +15,7 @@ const AddSongModal: React.FC<AddSongModalProps> = ({ show, onHide }) => {
   const [umetnik, setUmetnik] = useState("");
   const [youtubeId, setYoutubeId] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
-  const { categories, setSongs, refreshSongs } = useAppContext();
+  const { categories, refreshSongs } = useAppContext();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -1,30 +1,14 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useAppContext } from "@/context/AppContext";
 import SongCollection from "@/components/songs/SongCollection";
 import AuthButtons from "@/components/auth/AuthButtons";
-import { fetchAllSongs } from "@/services/musicService";
 
 const HomePage: React.FC = () => {
-  const {
-    selectedGenre,
-    sortBy,
-    setSongs,
-    refreshSongs,
-    showLoginModal,
-    setShowLoginModal,
-  } = useAppContext();
+  const { refreshSongs, showLoginModal, setShowLoginModal } = useAppContext();
 
   const location = useLocation();
   const [showRegister, setShowRegister] = useState(false);
-
-  const fetchSongs = useCallback(async () => {
-    const songs = await fetchAllSongs(
-      sortBy,
-      selectedGenre === "Sve" ? undefined : selectedGenre,
-    );
-    setSongs(songs);
-  }, [selectedGenre, sortBy, setSongs]);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -32,7 +16,7 @@ const HomePage: React.FC = () => {
       setShowLoginModal(true);
       setShowRegister(false);
     }
-  }, [location.search, refreshSongs, setShowLoginModal]);
+  }, [location.search, setShowLoginModal]);
 
   const handleCloseAuth = () => {
     setShowLoginModal(false);
@@ -41,7 +25,7 @@ const HomePage: React.FC = () => {
 
   return (
     <>
-      <SongCollection fetchSongs={fetchSongs} />
+      <SongCollection fetchSongs={refreshSongs} />
 
       {(showLoginModal || showRegister) && (
         <AuthButtons

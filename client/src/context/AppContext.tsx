@@ -6,7 +6,12 @@ import React, {
   useCallback,
 } from "react";
 import { fetchCategories } from "@/services/categoryService";
-import { likeSong, unlikeSong, fetchAllSongs } from "@/services/musicService";
+import {
+  likeSong,
+  unlikeSong,
+  fetchAllSongs,
+  fetchLikedSongs,
+} from "@/services/musicService";
 import {
   checkAuth,
   login as authLogin,
@@ -17,6 +22,7 @@ import { Song, Category } from "@/types/music";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import { AppContextType } from "@/types/context";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
@@ -33,6 +39,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const resetFilters = useCallback(() => {
     setSelectedGenre("Sve");
@@ -50,7 +58,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const refreshSongs = useCallback(async () => {
     try {
-      const songs = await fetchAllSongs(
+      const fetchMethod =
+        location.pathname === "/moje-lajkovane-pesme"
+          ? fetchLikedSongs
+          : fetchAllSongs;
+      const songs = await fetchMethod(
         sortBy,
         selectedGenre === "Sve" ? undefined : selectedGenre,
       );
@@ -59,7 +71,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       console.error("Failed to refresh songs:", error);
       toast.error("Došlo je do greške pri učitavanju pesama.");
     }
-  }, [selectedGenre, sortBy, setSongs]);
+  }, [selectedGenre, sortBy, location.pathname, setSongs]);
 
   useEffect(() => {
     checkAuth()
@@ -118,7 +130,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       await authLogout();
       handleLogout();
-      await refreshSongs();
+      if (location.pathname === "/") {
+        await refreshSongs();
+      } else if (location.pathname === "/moje-lajkovane-pesme") {
+        navigate("/");
+      }
       return Promise.resolve();
     } catch (error) {
       return Promise.reject(error);
