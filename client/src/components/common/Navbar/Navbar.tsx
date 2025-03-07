@@ -14,13 +14,14 @@ const Navbar: React.FC = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showAddSongModal, setShowAddSongModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const { isAuthenticated, setSelectedGenre, setSortBy } = useAppContext();
+  const { isAuthenticated, setSelectedGenre, setSortBy, refreshSongs } =
+    useAppContext();
   const navigate = useNavigate();
 
-  const handleLogoClick = () => {
+  const handleLogoClick = async () => {
     setSelectedGenre("Sve");
     setSortBy("newest");
-    setSearchQuery("");
+    await refreshSongs();
     navigate("/");
   };
 
