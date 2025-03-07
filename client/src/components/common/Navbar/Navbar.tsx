@@ -66,7 +66,14 @@ const Navbar: React.FC = () => {
         isLoggedIn={isAuthenticated}
         query={searchQuery}
         setQuery={setSearchQuery}
+        onAddSongClick={() => setShowAddSongModal(true)}
       />
+      {isAuthenticated && (
+        <AddSongModal
+          show={showAddSongModal}
+          onHide={() => setShowAddSongModal(false)}
+        />
+      )}
     </header>
   );
 };

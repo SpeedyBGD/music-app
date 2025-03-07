@@ -15,6 +15,7 @@ interface MobileMenuProps {
   isLoggedIn: boolean;
   query: string;
   setQuery: (query: string) => void;
+  onAddSongClick: () => void;
 }
 
 const MobileMenu: React.FC<MobileMenuProps> = ({
@@ -23,6 +24,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
   isLoggedIn,
   query,
   setQuery,
+  onAddSongClick,
 }) => {
   const { logout, email, setSelectedGenre, setSortBy, setSongs } =
     useAppContext();
@@ -100,13 +102,15 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
               >
                 Omiljene pesme
               </Link>
-              <Link
-                to="#"
-                className="text-white text-decoration-none"
-                onClick={onHide}
+              <button
+                className="text-white text-decoration-none bg-transparent border-0 text-start p-0"
+                onClick={() => {
+                  onAddSongClick();
+                  onHide();
+                }}
               >
                 Dodaj pesmu
-              </Link>
+              </button>
               <hr className="border-secondary" />
               <Link
                 to="#"
