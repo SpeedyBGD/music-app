@@ -1,4 +1,3 @@
-// File: components/icons/LoadingSpinner.tsx
 import IconProps from "@/types/IconProps";
 import React from "react";
 

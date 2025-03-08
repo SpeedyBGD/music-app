@@ -1,4 +1,3 @@
-// File: types/context.ts
 import { Song, Category } from "@/types/music";
 
 export interface AppContextType {
