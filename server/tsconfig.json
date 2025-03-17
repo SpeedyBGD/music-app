@@ -9,13 +9,13 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "outDir": "./dist",
     "baseUrl": "./",
     "allowJs": true,
+    "outDir": "dist",
     "paths": {
       "@server/*": ["./*"]
     }
   },
-  "include": ["./**/*.ts"],
+  "include": ["./**/*.ts", "server.ts"],
   "exclude": ["node_modules", "dist"]
 }

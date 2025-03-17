@@ -1,7 +1,7 @@
-import Database from 'better-sqlite3';
-import fs from 'fs';
+import Database from "better-sqlite3";
+import fs from "fs";
 
-const DB_PATH = 'baza.sqlite';
+const DB_PATH = "baza.sqlite";
 
 if (fs.existsSync(DB_PATH)) fs.unlinkSync(DB_PATH);
 
@@ -22,7 +22,7 @@ const migrations = [
     youtubeId TEXT NOT NULL,
     kategorijaId INTEGER,
     uneto DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (kategorijaId) REFERENCES kategorije(id) ON DELETE SET NULL
+       (kategorijaId) REFERENCES kategorije(id) ON DELETE SET NULL
   );
   `,
   `
@@ -74,7 +74,7 @@ INSERT INTO pesme (naziv, umetnik, youtubeId, kategorijaId, uneto) VALUES
   `,
 ];
 
-db.exec('BEGIN TRANSACTION;');
+db.exec("BEGIN TRANSACTION;");
 migrations.forEach((sql) => db.exec(sql));
-db.exec('COMMIT;');
+db.exec("COMMIT;");
 db.close();
