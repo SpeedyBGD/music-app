@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node dist/server.js",
     "build": "tsc",
-    "dev": "tsx watch ./server.ts",
+    "dev": "npx tsx watch ./server.ts",
     "migrate-db": "tsx scripts/migrate.ts"
   },
   "dependencies": {
