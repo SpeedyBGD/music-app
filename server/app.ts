@@ -12,7 +12,8 @@ const app: Express = express();
 
 app.use(
   cors({
-    origin: "https://music-app-qd27.onrender.com",
+    origin:
+      "https://music-app-git-main-manojlovic-drazens-projects.vercel.app/",
     credentials: true,
   })
 );
