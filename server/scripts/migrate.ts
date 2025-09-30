@@ -89,8 +89,28 @@ INSERT INTO pesme (naziv, umetnik, youtubeId, kategorijaId, uneto) VALUES
   `,
 ];
 
+// Function to check if table exists
+function tableExists(tableName: string): boolean {
+  try {
+    const result = db.prepare(`SELECT name FROM sqlite_master WHERE type='table' AND name=?`).get(tableName);
+    return !!result;
+  } catch {
+    return false;
+  }
+}
+
 try {
   console.log('Starting database migrations...');
+  
+  // Check if tables already exist (production scenario)
+  const tablesExist = tableExists('kategorije') && tableExists('pesme') && tableExists('korisnici') && tableExists('lajkovanje');
+  
+  if (tablesExist && process.env.NODE_ENV === 'production') {
+    console.log('Database tables already exist, skipping migrations');
+    db.close();
+    process.exit(0);
+  }
+  
   db.exec('BEGIN TRANSACTION;');
   
   migrations.forEach((sql, index) => {
