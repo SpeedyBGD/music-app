@@ -12,7 +12,7 @@ const app: Express = express();
 
 app.use(
   cors({
-    origin: "https://music-app-git-main-manojlovic-drazens-projects.vercel.app",
+    origin: "http://localhost:8080",
     credentials: true,
   })
 );

@@ -6,3 +6,4 @@ dist/
 *.log
 .npm
 baza.sqlite
+.vscode

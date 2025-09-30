@@ -27,30 +27,50 @@ Ovo je full-stack aplikacija za muziku koja omogućava korisnicima da pretražuj
 
 ## Kako pokrenuti projekat
 
-### Koraci za pokretanje
+### Brzi start (preporučeno)
 
-1. **Kopiraj .env fajlove**  
-   U oba foldera (`client` i `server`), kopiraj `.env.example` fajlove u `.env` i popuni potrebne vrednosti.
+1. **Instaliraj sve dependencies**  
+   Iz root foldera projekta, pokreni:
+   ```bash
+   npm run install:all
+   ```
 
-2. **Pokreni migracije na serveru**  
-   U folderu `server`, pokreni migracioni skript:
-
+2. **Pokreni migracije baze podataka**  
    ```bash
    npm run migrate-db
    ```
 
-3. **Pokreni server**  
-   U folderu **server**, pokreni server:
+3. **Pokreni ceo projekat (klijent + server)**  
    ```bash
    npm run dev
    ```
-4. **Pokreni klijent**  
-   U folderu **client**, pokreni klijent:
-   ```bash
-   npm run dev
-   ```
-5. **Otvori aplikaciju**
+
+4. **Otvori aplikaciju**
    Otvori browser i idi na `http://localhost:8080`.
+
+### Alternativni načini pokretanja
+
+**Pokretanje samo servera:**
+```bash
+npm run dev:server
+```
+
+**Pokretanje samo klijenta:**
+```bash
+npm run dev:client
+```
+
+**Build projekta:**
+```bash
+npm run build
+```
+
+### Ručno pokretanje (stari način)
+
+Ako želiš da pokreneš klijent i server odvojeno:
+
+1. **Server:** U folderu `server`, pokreni `npm run dev`
+2. **Klijent:** U folderu `client`, pokreni `npm run dev`
 
 ## Dodatne napomene
 
