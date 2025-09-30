@@ -1,11 +1,26 @@
 import Database from 'better-sqlite3';
 import fs from 'fs';
 
-const DB_PATH = 'baza.sqlite';
+const DB_PATH = process.env.DB_PATH || 'baza.sqlite';
 
-if (fs.existsSync(DB_PATH)) fs.unlinkSync(DB_PATH);
+// Only delete the database file if it exists and we're in development
+if (process.env.NODE_ENV !== 'production' && fs.existsSync(DB_PATH)) {
+  try {
+    fs.unlinkSync(DB_PATH);
+    console.log('Deleted existing database file');
+  } catch (error) {
+    console.warn('Could not delete existing database file:', error);
+  }
+}
 
-const db = new Database(DB_PATH);
+let db: Database.Database;
+try {
+  db = new Database(DB_PATH);
+  console.log(`Connected to database at: ${DB_PATH}`);
+} catch (error) {
+  console.error('Failed to connect to database:', error);
+  process.exit(1);
+}
 
 const migrations = [
   `
@@ -74,7 +89,32 @@ INSERT INTO pesme (naziv, umetnik, youtubeId, kategorijaId, uneto) VALUES
   `,
 ];
 
-db.exec('BEGIN TRANSACTION;');
-migrations.forEach((sql) => db.exec(sql));
-db.exec('COMMIT;');
-db.close();
+try {
+  console.log('Starting database migrations...');
+  db.exec('BEGIN TRANSACTION;');
+  
+  migrations.forEach((sql, index) => {
+    try {
+      db.exec(sql);
+      console.log(`Migration ${index + 1} completed successfully`);
+    } catch (error) {
+      console.error(`Migration ${index + 1} failed:`, error);
+      throw error;
+    }
+  });
+  
+  db.exec('COMMIT;');
+  console.log('All migrations completed successfully');
+} catch (error) {
+  console.error('Migration failed, rolling back:', error);
+  try {
+    db.exec('ROLLBACK;');
+  } catch (rollbackError) {
+    console.error('Rollback failed:', rollbackError);
+  }
+  db.close();
+  process.exit(1);
+} finally {
+  db.close();
+  console.log('Database connection closed');
+}

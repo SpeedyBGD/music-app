@@ -1,6 +1,6 @@
 import Database from 'better-sqlite3';
 
-const dbPath = './baza.sqlite';
+const dbPath = process.env.DB_PATH || './baza.sqlite';
 
 const db = new Database(dbPath);
 
