@@ -36,4 +36,22 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/music", musicRoutes);
 app.use("/api/auth", authRoutes);
 
+// Health check endpoint for Render
+app.get("/health", (req, res) => {
+  res.status(200).json({ 
+    status: "OK", 
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
+
+// Root endpoint
+app.get("/", (req, res) => {
+  res.status(200).json({ 
+    message: "Music App API Server",
+    version: "1.0.0",
+    status: "running"
+  });
+});
+
 export default app;
