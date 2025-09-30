@@ -3,8 +3,8 @@ import express, { Express } from "express";
 import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
-import musicRoutes from "./routes/musicRoutes";
-import authRoutes from "./routes/authRoutes";
+import musicRoutes from "./routes/musicRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
 
 dotenv.config();
 

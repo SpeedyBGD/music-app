@@ -7,9 +7,9 @@ import {
   unlikeSong,
   searchSongsController,
   addSong,
-} from '@server/controllers/musicController';
-import { authMiddleware } from '@server/middleware/authMiddleware';
-import { rateLimiter } from '@server/middleware/rateLimitMiddleware';
+} from '../controllers/musicController.js';
+import { authMiddleware } from '../middleware/authMiddleware.js';
+import { rateLimiter } from '../middleware/rateLimitMiddleware.js';
 
 const router = express.Router();
 

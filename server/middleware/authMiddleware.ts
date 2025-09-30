@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import db from '@server/utils/db';
-import { getJwtSecret } from '@server/utils/jwtUtils';
-import User from '@server/models/User';
+import db from '../utils/db.js';
+import { getJwtSecret } from '../utils/jwtUtils.js';
+import User from '../models/User.js';
 
 export const authMiddleware = (requireAuth: boolean = false) => {
   return async (req: Request, res: Response, next: NextFunction) => {

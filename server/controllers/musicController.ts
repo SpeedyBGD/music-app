@@ -7,9 +7,9 @@ import {
   unlikeSongService,
   searchSongs,
   addSongService,
-} from '@server/services/musicService';
-import { SongFilters } from '@server/models/Song';
-import User from '@server/models/User';
+} from '../services/musicService.js';
+import { SongFilters } from '../models/Song.js';
+import User from '../models/User.js';
 
 export const likeSong = (req: Request, res: Response) => {
   const user = res.locals.user as User;

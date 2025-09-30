@@ -1,9 +1,9 @@
-import db from '@server/utils/db';
+import db from '../utils/db.js';
 import Song, {
   SongFilters,
   Category,
   SongWithLikes,
-} from '@server/models/Song';
+} from '../models/Song.js';
 
 interface ServiceResponse<T> {
   error?: boolean;

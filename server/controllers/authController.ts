@@ -3,8 +3,8 @@ import {
   loginService,
   registerService,
   logoutService,
-} from '@server/services/authService';
-import User from '@server/models/User';
+} from '../services/authService.js';
+import User from '../models/User.js';
 
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
