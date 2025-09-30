@@ -6,8 +6,7 @@
   "scripts": {
     "start": "node dist/server.js",
     "build": "tsc",
-    "dev": "tsx watch ./server.ts",
-    "migrate-db": "node dist/scripts/migrate.js"
+    "dev": "tsx watch ./server.ts"
   },
   "dependencies": {
     "@types/better-sqlite3": "^7.6.12",
