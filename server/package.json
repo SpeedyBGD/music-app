@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node dist/server.js",
     "build": "tsc",
+    "dev": "node dist/server.js",
     "migrate-db": "echo 'Database migrations handled automatically by server startup'",
     "render-start": "node dist/server.js"
   },
