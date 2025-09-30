@@ -10,9 +10,21 @@ dotenv.config();
 
 const app: Express = express();
 
+// Configure CORS based on environment
+const allowedOrigins = [
+  "http://localhost:8080",
+  "https://music-app-three-gilt.vercel.app",
+  "https://music-app-xi-flame.vercel.app"
+];
+
+// Add any additional origins from environment variables
+if (process.env.ALLOWED_ORIGINS) {
+  allowedOrigins.push(...process.env.ALLOWED_ORIGINS.split(','));
+}
+
 app.use(
   cors({
-    origin: "http://localhost:8080",
+    origin: allowedOrigins,
     credentials: true,
   })
 );
