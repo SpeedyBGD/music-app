@@ -1,1 +1,1 @@
-web: cd server && npm run render-start
+web: cd server && node dist/server.js

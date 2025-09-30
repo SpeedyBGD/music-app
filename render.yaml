@@ -3,7 +3,7 @@ services:
     name: music-app-server
     env: node
     buildCommand: cd server && npm install && npm run build
-    startCommand: cd server && npm run render-start
+    startCommand: cd server && node dist/server.js
     plan: free
     rootDir: server
     envVars:
