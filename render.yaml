@@ -1,7 +1,7 @@
 services:
   - type: web
     name: music-app-server
-    env: node
+    env: node-20
     buildCommand: npm install --include=optional && npm run build
     startCommand: node dist/server.js
     plan: free
