@@ -1,0 +1,13 @@
+{
+  "buildCommand": "npm install --include=optional && npm run build",
+  "outputDirectory": "dist",
+  "installCommand": "npm install --include=optional",
+  "framework": "vite",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
+
