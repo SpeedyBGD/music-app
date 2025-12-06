@@ -109,24 +109,32 @@ process.on('unhandledRejection', (reason, promise) => {
   process.exit(1);
 });
 
-try {
-  // Initialize database first
-  initializeDatabase();
-  
-  // Start the server
-  const server = app.listen(PORT, '0.0.0.0', () => {
-    console.log(`✅ Server successfully started on port ${PORT}`);
-    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-    console.log(`Host: 0.0.0.0`);
-    console.log(`Server is ready to accept connections`);
-  });
+async function startServer() {
+  try {
+    // Initialize database first
+    initializeDatabase();
+    
+    // Start the server
+    const server = app.listen(PORT, '0.0.0.0', () => {
+      console.log(`✅ Server successfully started on port ${PORT}`);
+      console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`Host: 0.0.0.0`);
+      console.log(`Server is ready to accept connections`);
+    });
 
-  server.on('error', (error) => {
-    console.error('Server error:', error);
+    server.on('error', (error) => {
+      console.error('Server error:', error);
+      process.exit(1);
+    });
+
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    if (error instanceof Error) {
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+    }
     process.exit(1);
-  });
-
-} catch (error) {
-  console.error('Failed to start server:', error);
-  process.exit(1);
+  }
 }
+
+startServer();
