@@ -10,6 +10,32 @@ interface AddSongModalProps {
   onHide: () => void;
 }
 
+// Extract YouTube ID from URL or return as-is if already an ID
+const extractYouTubeId = (input: string): string => {
+  if (!input) return "";
+  
+  // If it's already just an ID (11 characters, alphanumeric and hyphens/underscores)
+  if (/^[a-zA-Z0-9_-]{11}$/.test(input.trim())) {
+    return input.trim();
+  }
+  
+  // Extract from various YouTube URL formats
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
+    /youtube\.com\/.*[?&]v=([a-zA-Z0-9_-]{11})/,
+  ];
+  
+  for (const pattern of patterns) {
+    const match = input.match(pattern);
+    if (match && match[1]) {
+      return match[1];
+    }
+  }
+  
+  // If no pattern matches, return trimmed input (might be invalid, but let backend validate)
+  return input.trim();
+};
+
 const AddSongModal: React.FC<AddSongModalProps> = ({ show, onHide }) => {
   const [naziv, setNaziv] = useState("");
   const [umetnik, setUmetnik] = useState("");
@@ -22,10 +48,16 @@ const AddSongModal: React.FC<AddSongModalProps> = ({ show, onHide }) => {
     if (!selectedCategory) return;
 
     try {
+      const extractedId = extractYouTubeId(youtubeId);
+      if (!extractedId || extractedId.length !== 11) {
+        toast.error("Nevažeći YouTube ID ili URL. Molimo unesite važeći YouTube ID ili URL.");
+        return;
+      }
+
       await addSong({
         naziv,
         umetnik,
-        youtubeId,
+        youtubeId: extractedId,
         kategorijaId: selectedCategory,
       });
       toast.success("Pesma uspešno dodata!");
@@ -74,14 +106,17 @@ const AddSongModal: React.FC<AddSongModalProps> = ({ show, onHide }) => {
             />
           </Form.Group>
           <Form.Group className="mb-3" controlId="formYoutubeId">
-            <Form.Label>YouTube ID</Form.Label>
+            <Form.Label>YouTube ID ili URL</Form.Label>
             <Form.Control
               type="text"
-              placeholder="Unesite YouTube ID"
+              placeholder="Unesite YouTube ID ili URL (npr. dQw4w9WgXcQ ili https://youtube.com/watch?v=dQw4w9WgXcQ)"
               value={youtubeId}
               onChange={(e) => setYoutubeId(e.target.value)}
               className="rounded-pill"
             />
+            <Form.Text className="text-muted">
+              Možete uneti samo ID (11 karaktera) ili punu YouTube URL adresu
+            </Form.Text>
           </Form.Group>
           <Form.Group className="mb-3" controlId="formCategory">
             <Form.Label>Kategorija</Form.Label>

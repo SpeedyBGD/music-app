@@ -97,9 +97,40 @@ export const searchSongsController = (req: Request, res: Response) => {
   return res.status(200).json(result.data);
 };
 
+// Extract YouTube ID from URL or return as-is if already an ID
+function extractYouTubeId(input: string): string {
+  if (!input) return "";
+  
+  const trimmed = input.trim();
+  
+  // If it's already just an ID (11 characters, alphanumeric and hyphens/underscores)
+  if (/^[a-zA-Z0-9_-]{11}$/.test(trimmed)) {
+    return trimmed;
+  }
+  
+  // Extract from various YouTube URL formats
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
+    /youtube\.com\/.*[?&]v=([a-zA-Z0-9_-]{11})/,
+  ];
+  
+  for (const pattern of patterns) {
+    const match = trimmed.match(pattern);
+    if (match && match[1]) {
+      return match[1];
+    }
+  }
+  
+  // If no pattern matches, return trimmed input
+  return trimmed;
+}
+
 export const addSong = (req: Request, res: Response) => {
   const user = res.locals.user as User;
-  const { naziv, umetnik, youtubeId, kategorijaId } = req.body;
+  let { naziv, umetnik, youtubeId, kategorijaId } = req.body;
+
+  // Extract YouTube ID from URL if needed
+  youtubeId = extractYouTubeId(youtubeId);
 
   const fields = [
     { name: 'Naziv pesme', value: naziv, isString: true },
@@ -121,6 +152,13 @@ export const addSong = (req: Request, res: Response) => {
         }`,
       });
     }
+  }
+
+  // Validate YouTube ID format (should be exactly 11 characters after extraction)
+  if (youtubeId.length !== 11 || !/^[a-zA-Z0-9_-]{11}$/.test(youtubeId)) {
+    return res.status(400).json({
+      message: 'Nevažeći YouTube ID. Molimo unesite važeći YouTube ID ili URL.',
+    });
   }
 
   const result = addSongService({
