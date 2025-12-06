@@ -9,7 +9,9 @@
     "dev": "node dist/server.js",
     "migrate-db": "echo 'Database migrations handled automatically by server startup'",
     "render-start": "node dist/server.js",
-    "postinstall": "npm rebuild better-sqlite3"
+    "postinstall": "npm rebuild better-sqlite3",
+    "view-db": "./view-db.sh",
+    "open-db": "open -a 'DB Browser for SQLite' baza.sqlite"
   },
   "dependencies": {
     "@types/better-sqlite3": "^7.6.12",

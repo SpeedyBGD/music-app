@@ -15,7 +15,9 @@
     "start:server": "cd server && npm start",
     "preview:client": "cd client && npm run preview",
     "install:all": "npm install && cd client && npm install && cd ../server && npm install",
-    "migrate-db": "cd server && npm run migrate-db"
+    "migrate-db": "cd server && npm run migrate-db",
+    "view-db": "cd server && ./view-db.sh",
+    "open-db": "open -a 'DB Browser for SQLite' server/baza.sqlite"
   },
   "devDependencies": {
     "concurrently": "^9.1.0"
