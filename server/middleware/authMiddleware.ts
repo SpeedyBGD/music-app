@@ -49,9 +49,11 @@ export const authMiddleware = (requireAuth: boolean = false) => {
           JWT_SECRET,
           { expiresIn: '15m' }
         );
+        const isProduction = process.env.NODE_ENV === 'production';
         res.cookie('accessToken', newAccessToken, {
           httpOnly: true,
-          secure: false,
+          secure: isProduction,
+          sameSite: isProduction ? 'none' : 'lax',
           maxAge: 15 * 60 * 1000,
         });
         res.locals.user = user;
@@ -63,8 +65,17 @@ export const authMiddleware = (requireAuth: boolean = false) => {
       res.locals.user = null;
       return next();
     } catch (error) {
-      res.clearCookie('accessToken');
-      res.clearCookie('refreshToken');
+      const isProduction = process.env.NODE_ENV === 'production';
+      res.clearCookie('accessToken', {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? 'none' : 'lax',
+      });
+      res.clearCookie('refreshToken', {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? 'none' : 'lax',
+      });
       if (requireAuth)
         return res.status(401).json({ message: 'Nevalidan ili istekao token' });
       res.locals.user = null;

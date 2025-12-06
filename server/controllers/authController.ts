@@ -15,14 +15,17 @@ export const login = async (req: Request, res: Response) => {
   if (result.error)
     return res.status(result.status!).json({ message: result.message });
 
+  const isProduction = process.env.NODE_ENV === 'production';
   res.cookie('accessToken', result.accessToken, {
     httpOnly: true,
-    secure: false,
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'lax',
     maxAge: 15 * 60 * 1000,
   });
   res.cookie('refreshToken', result.refreshToken, {
     httpOnly: true,
-    secure: false,
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'lax',
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
   res.json({ message: 'Uspešna prijava' });
@@ -39,14 +42,17 @@ export const register = async (req: Request, res: Response) => {
   if (result.error)
     return res.status(result.status!).json({ message: result.message });
 
+  const isProduction = process.env.NODE_ENV === 'production';
   res.cookie('accessToken', result.accessToken, {
     httpOnly: true,
-    secure: false,
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'lax',
     maxAge: 15 * 60 * 1000,
   });
   res.cookie('refreshToken', result.refreshToken, {
     httpOnly: true,
-    secure: false,
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'lax',
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
   res.status(201).json({ message: 'Uspešna registracija' });
@@ -61,8 +67,17 @@ export const logout = async (req: Request, res: Response) => {
   if (result.error)
     return res.status(result.status!).json({ message: result.message });
 
-  res.clearCookie('accessToken');
-  res.clearCookie('refreshToken');
+  const isProduction = process.env.NODE_ENV === 'production';
+  res.clearCookie('accessToken', {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'lax',
+  });
+  res.clearCookie('refreshToken', {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'lax',
+  });
   res.json({ message: 'Uspešno ste se odjavili' });
 };
 
